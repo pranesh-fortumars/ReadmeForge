@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import Navbar from './components/Navbar'
-import LandingPage from './components/LandingPage'
-import Editor from './components/Editor/Editor'
-import Preview from './components/Preview/Preview'
+import Navbar from './components/Navbar.tsx'
+import LandingPage from './components/LandingPage.tsx'
+
+import Editor from './components/Editor/Editor.tsx'
+import Preview from './components/Preview/Preview.tsx'
 
 function App() {
   const [showEditor, setShowEditor] = useState(false)
