@@ -6,6 +6,8 @@ import Dashboard from './components/Dashboard.tsx'
 import ImportRepo from './components/ImportRepo.tsx'
 import Editor from './components/Editor/Editor.tsx'
 import Preview from './components/Preview/Preview.tsx'
+import BadgeStudio from './components/Tools/BadgeStudio.tsx'
+import MarkdownPlayground from './components/Tools/MarkdownPlayground.tsx'
 
 // A wrapper component for the Editor workspace
 function Workspace() {
@@ -50,6 +52,8 @@ function App() {
           <Route path="/" element={<LandingPage onStart={() => navigate('/dashboard')} />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/import" element={<ImportRepo />} />
+          <Route path="/tools/badges" element={<BadgeStudio />} />
+          <Route path="/tools/playground" element={<MarkdownPlayground />} />
           <Route path="/editor/:id" element={<Workspace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

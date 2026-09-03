@@ -97,6 +97,7 @@ export interface TroubleshootingItem {
 
 export interface READMEProject {
   id: string;
+  projectType: 'project' | 'profile';
   version: number;
   metadata: ProjectDetails;
   sections: Section[];

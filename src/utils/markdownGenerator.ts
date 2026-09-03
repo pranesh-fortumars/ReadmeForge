@@ -46,9 +46,10 @@ export function generateMarkdown(state: READMEProject): string {
     markdown += `\n`;
   }
 
-  // Tech Stack
+  // Tech Stack / Skills
   if (isEnabled('tech-stack') && technologies && technologies.length > 0) {
-    markdown += `## Tech Stack\n\n`;
+    markdown += state.projectType === 'profile' ? `## Skills\n\n` : `## Tech Stack\n\n`;
+    
     // Group by category
     const categories = [...new Set(technologies.map(t => t.category))];
     categories.forEach(cat => {
@@ -59,6 +60,21 @@ export function generateMarkdown(state: READMEProject): string {
       });
       markdown += '\n';
     });
+  }
+
+  // GitHub Stats (Profile Specific)
+  if (state.projectType === 'profile' && isEnabled('stats') && state.settings?.showGithubStats && metadata.githubUrl) {
+    const username = metadata.githubUrl.split('/').pop();
+    const theme = state.settings.theme || 'radical';
+    if (username) {
+      markdown += `## GitHub Stats\n\n`;
+      markdown += `<div align="center">\n`;
+      markdown += `  <img src="https://github-readme-stats.vercel.app/api?username=${username}&show_icons=true&theme=${theme}" alt="${username}'s GitHub stats" />\n`;
+      if (state.settings?.showTopLangs) {
+        markdown += `  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${username}&layout=compact&theme=${theme}" alt="${username}'s Top Languages" />\n`;
+      }
+      markdown += `</div>\n\n`;
+    }
   }
 
   // Installation

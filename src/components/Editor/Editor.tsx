@@ -1,12 +1,23 @@
 import { Settings, AlertCircle, GripVertical } from 'lucide-react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import type { DropResult } from '@hello-pangea/dnd'
+import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 import { useReadme } from '../../hooks/useReadme'
 import { calculateQualityScore } from '../../utils/qualityScore'
 
 export default function Editor() {
+  const { id } = useParams<{ id: string }>()
   const { state, updateProjectDetails, toggleSection, reorderSections, resetState } = useReadme()
   const quality = calculateQualityScore(state)
+
+  useEffect(() => {
+    if (id === 'profile' && state.projectType !== 'profile') {
+      resetState('profile')
+    } else if (id === 'new' && state.projectType !== 'project') {
+      resetState('project')
+    }
+  }, [id])
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -31,7 +42,7 @@ export default function Editor() {
             </span>
           </div>
           <button 
-            onClick={resetState}
+            onClick={() => resetState()}
             className="text-xs text-red-500 hover:text-red-600 font-medium"
           >
             Reset

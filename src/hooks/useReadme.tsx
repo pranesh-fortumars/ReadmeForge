@@ -19,6 +19,7 @@ export const defaultSections: Section[] = [
 
 export const defaultProject: READMEProject = {
   id: 'default',
+  projectType: 'project',
   version: 2,
   metadata: {
     name: '',
@@ -77,13 +78,68 @@ export const defaultProject: READMEProject = {
   updatedAt: new Date().toISOString()
 };
 
+export const defaultProfile: READMEProject = {
+  id: 'profile',
+  projectType: 'profile',
+  version: 2,
+  metadata: {
+    name: 'Hi, I am Developer 👋',
+    description: 'Passionate frontend engineer and open-source contributor',
+    longDescription: 'I am currently working on awesome web projects. I love building tools that empower developers.',
+    projectUrl: '',
+    githubUrl: '',
+    authorName: '',
+    authorUrl: '',
+    license: '',
+  },
+  sections: [
+    { id: 'header', title: 'Greeting', enabled: true },
+    { id: 'description', title: 'About Me', enabled: true },
+    { id: 'tech-stack', title: 'Skills', enabled: true },
+    { id: 'stats', title: 'GitHub Stats', enabled: true },
+    { id: 'contact', title: 'Socials', enabled: true },
+  ],
+  features: [],
+  technologies: [
+    { id: '1', name: 'React', category: 'Frontend' },
+    { id: '2', name: 'TypeScript', category: 'Language' },
+  ],
+  badges: [],
+  installation: { methods: [] },
+  usage: { commands: [] },
+  screenshots: [],
+  demo: { liveUrl: '', videoUrl: '', instructions: '' },
+  environmentVariables: [],
+  api: { endpoints: [] },
+  projectStructure: '',
+  roadmap: [],
+  faq: [],
+  troubleshooting: [],
+  contributing: { instructions: '' },
+  deployment: { instructions: '' },
+  author: { name: '', url: '', email: '' },
+  contact: { links: [
+    { id: 'twitter', name: 'Twitter', url: 'https://twitter.com/username' },
+    { id: 'linkedin', name: 'LinkedIn', url: 'https://linkedin.com/in/username' }
+  ] },
+  settings: {
+    showGithubStats: true,
+    showTopLangs: true,
+    theme: 'radical'
+  },
+  generatedMarkdown: '',
+  qualityScore: { score: 0, recommendations: [] },
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
+
 interface ReadmeContextType {
   state: READMEProject;
   setState: React.Dispatch<React.SetStateAction<READMEProject>>;
   updateProjectDetails: (details: Partial<READMEProject['metadata']>) => void;
   toggleSection: (id: string) => void;
   reorderSections: (startIndex: number, endIndex: number) => void;
-  resetState: () => void;
+  resetState: (type?: 'project' | 'profile') => void;
 }
 
 const ReadmeContext = createContext<ReadmeContextType | undefined>(undefined);
@@ -134,9 +190,9 @@ export function ReadmeProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const resetState = () => {
-    if (window.confirm('Are you sure you want to reset your project? This cannot be undone.')) {
-      setState(defaultProject);
+  const resetState = (type: 'project' | 'profile' = 'project') => {
+    if (window.confirm('Are you sure you want to reset your workspace? This cannot be undone.')) {
+      setState(type === 'profile' ? defaultProfile : defaultProject);
     }
   };
 

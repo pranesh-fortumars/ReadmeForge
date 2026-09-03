@@ -67,6 +67,15 @@ export default function Dashboard() {
                   <Plus className="w-8 h-8 mb-2 text-gray-400" />
                   <span className="font-medium">New Project</span>
                 </div>
+                
+                {/* Profile README Card */}
+                <div 
+                  onClick={() => navigate('/editor/profile')}
+                  className="p-5 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-colors cursor-pointer flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 h-40"
+                >
+                  <Star className="w-8 h-8 mb-2 text-gray-400" />
+                  <span className="font-medium">New Profile</span>
+                </div>
               </div>
             </section>
           </div>
@@ -85,7 +94,10 @@ export default function Dashboard() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">Browse starter layouts</p>
                   </div>
                 </button>
-                <button className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-blue-500 transition-colors text-left group">
+                <button 
+                  onClick={() => navigate('/tools/badges')}
+                  className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-blue-500 transition-colors text-left group"
+                >
                   <div className="w-10 h-10 rounded-md bg-blue-100 dark:bg-gray-800 flex items-center justify-center text-blue-600 dark:text-blue-400">
                     <Star className="w-5 h-5" />
                   </div>
@@ -94,7 +106,10 @@ export default function Dashboard() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">Generate custom badges</p>
                   </div>
                 </button>
-                <button className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-orange-500 transition-colors text-left group">
+                <button 
+                  onClick={() => navigate('/tools/playground')}
+                  className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-orange-500 transition-colors text-left group"
+                >
                   <div className="w-10 h-10 rounded-md bg-orange-100 dark:bg-gray-800 flex items-center justify-center text-orange-600 dark:text-orange-400">
                     <FileText className="w-5 h-5" />
                   </div>
