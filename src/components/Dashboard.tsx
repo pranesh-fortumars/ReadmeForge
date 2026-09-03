@@ -118,6 +118,18 @@ export default function Dashboard() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">Test markdown syntax</p>
                   </div>
                 </button>
+                <button 
+                  onClick={() => navigate('/tools/changelog')}
+                  className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-emerald-500 transition-colors text-left group"
+                >
+                  <div className="w-10 h-10 rounded-md bg-emerald-100 dark:bg-gray-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <GitBranch className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Changelog Gen</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Create release notes</p>
+                  </div>
+                </button>
               </div>
             </section>
           </div>

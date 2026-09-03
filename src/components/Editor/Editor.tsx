@@ -8,7 +8,7 @@ import { calculateQualityScore } from '../../utils/qualityScore'
 
 export default function Editor() {
   const { id } = useParams<{ id: string }>()
-  const { state, updateProjectDetails, toggleSection, reorderSections, resetState } = useReadme()
+  const { state, updateProjectDetails, toggleSection, reorderSections, resetState, undo, redo, canUndo, canRedo } = useReadme()
   const quality = calculateQualityScore(state)
 
   useEffect(() => {
@@ -40,6 +40,24 @@ export default function Editor() {
             }`}>
               {quality.score}/100
             </span>
+          </div>
+          <div className="flex items-center gap-1 border-r border-gray-200 dark:border-gray-800 pr-4 mr-2">
+            <button
+              onClick={undo}
+              disabled={!canUndo}
+              className="px-2 py-1 text-xs font-medium rounded text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 disabled:opacity-30 transition-colors"
+              title="Undo"
+            >
+              Undo
+            </button>
+            <button
+              onClick={redo}
+              disabled={!canRedo}
+              className="px-2 py-1 text-xs font-medium rounded text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 disabled:opacity-30 transition-colors"
+              title="Redo"
+            >
+              Redo
+            </button>
           </div>
           <button 
             onClick={() => resetState()}

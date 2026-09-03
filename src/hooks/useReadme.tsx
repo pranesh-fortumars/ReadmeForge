@@ -140,6 +140,10 @@ interface ReadmeContextType {
   toggleSection: (id: string) => void;
   reorderSections: (startIndex: number, endIndex: number) => void;
   resetState: (type?: 'project' | 'profile') => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
 }
 
 const ReadmeContext = createContext<ReadmeContextType | undefined>(undefined);
@@ -161,43 +165,75 @@ export function ReadmeProvider({ children }: { children: ReactNode }) {
     return defaultProject;
   });
 
+  const [history, setHistory] = useState<READMEProject[]>([])
+  const [historyIndex, setHistoryIndex] = useState(-1)
+
   useEffect(() => {
     localStorage.setItem('readmeforge:current-project', JSON.stringify(state));
   }, [state]);
 
+  const commitToHistory = (newState: READMEProject) => {
+    setHistory(prev => {
+      const newHistory = prev.slice(0, historyIndex + 1)
+      if (newHistory.length > 20) newHistory.shift() // Keep last 20 changes
+      return [...newHistory, newState]
+    })
+    setHistoryIndex(prev => Math.min(19, prev + 1))
+    setState(newState)
+  }
+
+  const undo = () => {
+    if (historyIndex > 0) {
+      setHistoryIndex(prev => prev - 1)
+      setState(history[historyIndex - 1])
+    }
+  }
+
+  const redo = () => {
+    if (historyIndex < history.length - 1) {
+      setHistoryIndex(prev => prev + 1)
+      setState(history[historyIndex + 1])
+    }
+  }
+
   const updateProjectDetails = (details: Partial<READMEProject['metadata']>) => {
-    setState(prev => ({
-      ...prev,
-      metadata: { ...prev.metadata, ...details }
-    }));
+    const newState = {
+      ...state,
+      metadata: { ...state.metadata, ...details }
+    }
+    commitToHistory(newState)
   };
 
   const toggleSection = (id: string) => {
-    setState(prev => ({
-      ...prev,
-      sections: prev.sections.map(s => 
+    const newState = {
+      ...state,
+      sections: state.sections.map(s => 
         s.id === id ? { ...s, enabled: !s.enabled } : s
       )
-    }));
+    }
+    commitToHistory(newState)
   };
 
   const reorderSections = (startIndex: number, endIndex: number) => {
-    setState(prev => {
-      const result = Array.from(prev.sections);
-      const [removed] = result.splice(startIndex, 1);
-      result.splice(endIndex, 0, removed);
-      return { ...prev, sections: result };
-    });
+    const result = Array.from(state.sections);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    const newState = { ...state, sections: result }
+    commitToHistory(newState)
   };
 
   const resetState = (type: 'project' | 'profile' = 'project') => {
     if (window.confirm('Are you sure you want to reset your workspace? This cannot be undone.')) {
-      setState(type === 'profile' ? defaultProfile : defaultProject);
+      const newState = type === 'profile' ? defaultProfile : defaultProject
+      commitToHistory(newState)
     }
   };
 
   return (
-    <ReadmeContext.Provider value={{ state, setState, updateProjectDetails, toggleSection, reorderSections, resetState }}>
+    <ReadmeContext.Provider value={{ 
+      state, setState, updateProjectDetails, toggleSection, reorderSections, resetState,
+      undo, redo, canUndo: historyIndex > 0, canRedo: historyIndex < history.length - 1
+    }}>
       {children}
     </ReadmeContext.Provider>
   );

@@ -8,6 +8,8 @@ import Editor from './components/Editor/Editor.tsx'
 import Preview from './components/Preview/Preview.tsx'
 import BadgeStudio from './components/Tools/BadgeStudio.tsx'
 import MarkdownPlayground from './components/Tools/MarkdownPlayground.tsx'
+import ChangelogGenerator from './components/Tools/ChangelogGenerator.tsx'
+import CommandPalette from './components/CommandPalette.tsx'
 
 // A wrapper component for the Editor workspace
 function Workspace() {
@@ -48,12 +50,14 @@ function App() {
       />
       
       <main className="flex-1 flex overflow-hidden w-full relative">
+        <CommandPalette />
         <Routes>
           <Route path="/" element={<LandingPage onStart={() => navigate('/dashboard')} />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/import" element={<ImportRepo />} />
           <Route path="/tools/badges" element={<BadgeStudio />} />
           <Route path="/tools/playground" element={<MarkdownPlayground />} />
+          <Route path="/tools/changelog" element={<ChangelogGenerator />} />
           <Route path="/editor/:id" element={<Workspace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
