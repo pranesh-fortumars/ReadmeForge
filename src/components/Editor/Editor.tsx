@@ -132,8 +132,22 @@ export default function Editor() {
           </DragDropContext>
         </section>
         
+        {quality.errors.length > 0 && (
+          <section className="mt-8 p-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-900">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+              <h3 className="text-sm font-semibold text-red-900 dark:text-red-300">Linter Errors</h3>
+            </div>
+            <ul className="list-disc list-inside text-xs text-red-800 dark:text-red-400 space-y-1">
+              {quality.errors.map((err, i) => (
+                <li key={i}>{err}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {quality.recommendations.length > 0 && (
-          <section className="mt-8 p-4 rounded-lg border border-purple-200 bg-purple-50 dark:bg-purple-900/10 dark:border-purple-900">
+          <section className="mt-4 p-4 rounded-lg border border-purple-200 bg-purple-50 dark:bg-purple-900/10 dark:border-purple-900">
             <div className="flex items-center gap-2 mb-2">
               <AlertCircle className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               <h3 className="text-sm font-semibold text-purple-900 dark:text-purple-300">Recommendations</h3>

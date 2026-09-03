@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar.tsx'
 import LandingPage from './components/LandingPage.tsx'
 import Dashboard from './components/Dashboard.tsx'
+import ImportRepo from './components/ImportRepo.tsx'
 import Editor from './components/Editor/Editor.tsx'
 import Preview from './components/Preview/Preview.tsx'
 
@@ -48,6 +49,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage onStart={() => navigate('/dashboard')} />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/import" element={<ImportRepo />} />
           <Route path="/editor/:id" element={<Workspace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
