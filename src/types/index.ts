@@ -95,35 +95,8 @@ export interface TroubleshootingItem {
   solution: string;
 }
 
-export interface READMEProject {
-  id: string;
-  projectType: 'project' | 'profile';
-  version: number;
-  metadata: ProjectDetails;
-  sections: Section[];
-  features: Feature[];
-  technologies: TechStackItem[];
-  badges: Badge[];
-  installation: InstallationConfig;
-  usage: UsageConfig;
-  screenshots: Screenshot[];
-  demo: DemoConfig;
-  environmentVariables: EnvironmentVariable[];
-  api: { endpoints: APIEndpoint[] };
-  projectStructure: string;
-  roadmap: RoadmapItem[];
-  faq: FAQItem[];
-  troubleshooting: TroubleshootingItem[];
-  contributing: { instructions: string };
-  deployment: { instructions: string };
-  author: { name: string; url: string; email: string };
-  contact: { links: { id: string; name: string; url: string }[] };
-  settings: Record<string, any>;
-  generatedMarkdown: string;
-  qualityScore: { score: number; recommendations: any[] };
-  createdAt: string;
-  updatedAt: string;
-}
+export type { READMEProject } from './project';
+export type { GitHubRepository, RepositoryAnalysis } from './repository';
+export type { DocumentationHealth } from './health';
 
-// Temporary alias to smooth over the migration from the old ReadmeState
-export type ReadmeState = READMEProject;
+export type ReadmeState = import('./project').READMEProject;

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { READMEProject, Section } from '../types';
+import { StorageManager } from '../services/storage/storageService';
 
 export const defaultSections: Section[] = [
   { id: 'header', title: 'Header', enabled: true },
@@ -140,6 +141,7 @@ interface ReadmeContextType {
   toggleSection: (id: string) => void;
   reorderSections: (startIndex: number, endIndex: number) => void;
   resetState: (type?: 'project' | 'profile') => void;
+  loadProject: (project: READMEProject) => void;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -170,6 +172,7 @@ export function ReadmeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem('readmeforge:current-project', JSON.stringify(state));
+    StorageManager.saveProject(state);
   }, [state]);
 
   const commitToHistory = (newState: READMEProject) => {
@@ -180,6 +183,12 @@ export function ReadmeProvider({ children }: { children: ReactNode }) {
     })
     setHistoryIndex(prev => Math.min(19, prev + 1))
     setState(newState)
+  }
+
+  const loadProject = (project: READMEProject) => {
+    setState(project);
+    setHistory([]);
+    setHistoryIndex(-1);
   }
 
   const undo = () => {
@@ -231,7 +240,7 @@ export function ReadmeProvider({ children }: { children: ReactNode }) {
 
   return (
     <ReadmeContext.Provider value={{ 
-      state, setState, updateProjectDetails, toggleSection, reorderSections, resetState,
+      state, setState, updateProjectDetails, toggleSection, reorderSections, resetState, loadProject,
       undo, redo, canUndo: historyIndex > 0, canRedo: historyIndex < history.length - 1
     }}>
       {children}

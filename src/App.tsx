@@ -10,6 +10,7 @@ import BadgeStudio from './components/Tools/BadgeStudio.tsx'
 import MarkdownPlayground from './components/Tools/MarkdownPlayground.tsx'
 import ChangelogGenerator from './components/Tools/ChangelogGenerator.tsx'
 import CommandPalette from './components/CommandPalette.tsx'
+import { StorageManager } from './services/storage/storageService.ts'
 
 // A wrapper component for the Editor workspace
 function Workspace() {
@@ -30,6 +31,7 @@ function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    StorageManager.migrateLegacyData()
     if (theme === 'dark') {
       document.documentElement.classList.add('dark')
     } else {

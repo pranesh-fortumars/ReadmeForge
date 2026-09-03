@@ -1,8 +1,29 @@
-import { Plus, FileText, ArrowRight, LayoutTemplate, Star, GitBranch } from 'lucide-react'
+import { Plus, FileText, ArrowRight, LayoutTemplate, Star, GitBranch, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useReadme } from '../hooks/useReadme'
+import { StorageManager } from '../services/storage/storageService'
+import type { READMEProject } from '../types'
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const { loadProject } = useReadme()
+  const [projects, setProjects] = useState<READMEProject[]>([])
+
+  useEffect(() => {
+    setProjects(StorageManager.getProjects())
+  }, [])
+
+  const handleLoadProject = (project: READMEProject) => {
+    loadProject(project)
+    navigate('/editor/default')
+  }
+
+  const handleDeleteProject = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    StorageManager.deleteProject(id)
+    setProjects(StorageManager.getProjects())
+  }
 
   return (
     <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 p-6 md:p-12">
@@ -42,22 +63,38 @@ export default function Dashboard() {
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Projects</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Temporary placeholder card */}
-                <div className="p-5 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-xl hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between h-40">
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-900 dark:text-white">Professional README</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Updated 2 minutes ago</p>
+                
+                {projects.map((project) => (
+                  <div 
+                    key={project.id}
+                    onClick={() => handleLoadProject(project)}
+                    className="p-5 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-xl hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between h-40 group"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold text-lg text-gray-900 dark:text-white truncate max-w-[150px]" title={project.metadata.name || 'Untitled Project'}>
+                          {project.metadata.name || 'Untitled Project'}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 capitalize">{project.projectType || 'Project'}</p>
+                      </div>
+                      <button 
+                        onClick={(e) => handleDeleteProject(e, project.id)}
+                        className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Delete project"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="flex justify-between items-center mt-4">
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                        {project.sections.filter(s => s.enabled).length} sections enabled
+                      </span>
+                      <span className="text-sm text-purple-600 dark:text-purple-400 font-medium hover:underline flex items-center gap-1">
+                        Open <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-sm font-medium text-green-600 dark:text-green-400">Score: 92/100</span>
-                    <button 
-                      onClick={() => navigate('/editor/default')}
-                      className="text-sm text-purple-600 dark:text-purple-400 font-medium hover:underline flex items-center gap-1"
-                    >
-                      Open <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                ))}
                 
                 {/* Empty Create Card */}
                 <div 
