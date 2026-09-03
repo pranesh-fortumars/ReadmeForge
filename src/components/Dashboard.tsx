@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { useReadme } from '../hooks/useReadme'
 import { StorageManager } from '../services/storage/storageService'
 import type { READMEProject } from '../types'
+import { Button } from './ui/Button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/Card'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -36,20 +38,14 @@ export default function Dashboard() {
             <p className="text-gray-600 dark:text-gray-400">Create documentation that makes your repository easier to understand.</p>
           </div>
           <div className="flex gap-4">
-            <button 
-              onClick={() => navigate('/editor/new')}
-              className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2"
-            >
+            <Button onClick={() => navigate('/editor/new')} className="gap-2">
               <Plus className="w-5 h-5" />
               Create README
-            </button>
-            <button 
-              onClick={() => navigate('/import')}
-              className="px-6 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-200 font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2"
-            >
+            </Button>
+            <Button onClick={() => navigate('/import')} variant="outline" className="gap-2">
               <GitBranch className="w-5 h-5" />
               Import Repository
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -65,35 +61,39 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
                 {projects.map((project) => (
-                  <div 
+                  <Card 
                     key={project.id}
                     onClick={() => handleLoadProject(project)}
-                    className="p-5 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-xl hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between h-40 group"
+                    className="hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between h-40 group"
                   >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-semibold text-lg text-gray-900 dark:text-white truncate max-w-[150px]" title={project.metadata.name || 'Untitled Project'}>
-                          {project.metadata.name || 'Untitled Project'}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 capitalize">{project.projectType || 'Project'}</p>
+                    <CardHeader className="pb-2 pt-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-lg truncate max-w-[150px]" title={project.metadata.name || 'Untitled Project'}>
+                            {project.metadata.name || 'Untitled Project'}
+                          </CardTitle>
+                          <CardDescription className="mt-1 capitalize">{project.projectType || 'Project'}</CardDescription>
+                        </div>
+                        <button 
+                          onClick={(e) => handleDeleteProject(e, project.id)}
+                          className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Delete project"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                      <button 
-                        onClick={(e) => handleDeleteProject(e, project.id)}
-                        className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="Delete project"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="flex justify-between items-center mt-4">
-                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                        {project.sections.filter(s => s.enabled).length} sections enabled
-                      </span>
-                      <span className="text-sm text-purple-600 dark:text-purple-400 font-medium hover:underline flex items-center gap-1">
-                        Open <ArrowRight className="w-4 h-4" />
-                      </span>
-                    </div>
-                  </div>
+                    </CardHeader>
+                    <CardContent className="pb-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                          {project.sections.filter(s => s.enabled).length} sections enabled
+                        </span>
+                        <span className="text-sm text-purple-600 dark:text-purple-400 font-medium hover:underline flex items-center gap-1">
+                          Open <ArrowRight className="w-4 h-4" />
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
                 
                 {/* Empty Create Card */}
