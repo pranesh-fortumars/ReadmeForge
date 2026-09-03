@@ -1,4 +1,4 @@
-import type { ReadmeState } from '../types';
+import type { READMEProject } from '../types';
 
 export interface QualityResult {
   score: number;
@@ -6,16 +6,16 @@ export interface QualityResult {
   recommendations: string[];
 }
 
-export function calculateQualityScore(state: ReadmeState): QualityResult {
+export function calculateQualityScore(state: READMEProject): QualityResult {
   const completed: string[] = [];
   const recommendations: string[] = [];
   let score = 0;
 
-  const { projectDetails, sections, features, techStack, screenshots } = state;
-  const isEnabled = (id: string) => sections.find(s => s.id === id)?.enabled;
+  const { metadata, sections, features, technologies, screenshots, installation, usage, demo } = state;
+  const isEnabled = (id: string) => sections?.find(s => s.id === id)?.enabled;
 
   // Description
-  if (projectDetails.description && projectDetails.description.length > 10) {
+  if (metadata.description && metadata.description.length > 10) {
     completed.push('Project description');
     score += 15;
   } else {
@@ -23,7 +23,7 @@ export function calculateQualityScore(state: ReadmeState): QualityResult {
   }
 
   // Installation
-  if (isEnabled('installation') && state.installCommand) {
+  if (isEnabled('installation') && installation?.methods?.length > 0) {
     completed.push('Installation instructions');
     score += 15;
   } else {
@@ -31,7 +31,7 @@ export function calculateQualityScore(state: ReadmeState): QualityResult {
   }
 
   // Usage
-  if (isEnabled('usage') && state.runCommand) {
+  if (isEnabled('usage') && usage?.commands?.length > 0) {
     completed.push('Usage section');
     score += 15;
   } else {
@@ -39,7 +39,7 @@ export function calculateQualityScore(state: ReadmeState): QualityResult {
   }
 
   // Tech Stack
-  if (isEnabled('techStack') && techStack.length > 0) {
+  if (isEnabled('tech-stack') && technologies && technologies.length > 0) {
     completed.push('Tech stack');
     score += 10;
   } else {
@@ -47,7 +47,7 @@ export function calculateQualityScore(state: ReadmeState): QualityResult {
   }
 
   // License
-  if (isEnabled('license') && projectDetails.license) {
+  if (isEnabled('license') && metadata.license) {
     completed.push('License');
     score += 10;
   } else {
@@ -55,7 +55,7 @@ export function calculateQualityScore(state: ReadmeState): QualityResult {
   }
 
   // Screenshots
-  if (isEnabled('screenshots') && screenshots.length > 0) {
+  if (isEnabled('screenshots') && screenshots && screenshots.length > 0) {
     completed.push('Screenshots included');
     score += 15;
   } else {
@@ -63,7 +63,7 @@ export function calculateQualityScore(state: ReadmeState): QualityResult {
   }
 
   // Demo URL
-  if (isEnabled('demo') && projectDetails.projectUrl) {
+  if (isEnabled('demo') && (demo?.liveUrl || metadata.projectUrl)) {
     completed.push('Live demo URL');
     score += 10;
   } else {
@@ -71,7 +71,7 @@ export function calculateQualityScore(state: ReadmeState): QualityResult {
   }
 
   // Features
-  if (isEnabled('features') && features.length > 0) {
+  if (isEnabled('features') && features && features.length > 0) {
     completed.push('Features list');
     score += 10;
   } else {

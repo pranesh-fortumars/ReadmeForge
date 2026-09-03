@@ -1,28 +1,28 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import type { ReadmeState, ProjectDetails, Section } from '../types';
+import type { READMEProject, Section } from '../types';
 
 export const defaultSections: Section[] = [
   { id: 'header', title: 'Header', enabled: true },
   { id: 'description', title: 'Description', enabled: true },
   { id: 'badges', title: 'Badges', enabled: true },
-  { id: 'features', title: 'Features', enabled: true },
-  { id: 'demo', title: 'Demo', enabled: true },
   { id: 'screenshots', title: 'Screenshots', enabled: true },
-  { id: 'techStack', title: 'Tech Stack', enabled: true },
+  { id: 'tech-stack', title: 'Tech Stack', enabled: true },
   { id: 'installation', title: 'Installation', enabled: true },
   { id: 'usage', title: 'Usage', enabled: true },
-  { id: 'envVars', title: 'Environment Variables', enabled: true },
-  { id: 'projectStructure', title: 'Project Structure', enabled: true },
+  { id: 'env-vars', title: 'Environment Variables', enabled: true },
+  { id: 'project-structure', title: 'Project Structure', enabled: true },
   { id: 'contributing', title: 'Contributing', enabled: true },
   { id: 'license', title: 'License', enabled: true },
-  { id: 'author', title: 'Author', enabled: true },
+  { id: 'author', title: 'Author', enabled: true }
 ];
 
-export const defaultState: ReadmeState = {
-  projectDetails: {
-    name: 'READMEForge',
-    description: 'A modern GitHub README generator that helps developers create professional documentation in minutes.',
+export const defaultProject: READMEProject = {
+  id: 'default',
+  version: 2,
+  metadata: {
+    name: '',
+    description: '',
     longDescription: '',
     projectUrl: '',
     githubUrl: '',
@@ -32,87 +32,116 @@ export const defaultState: ReadmeState = {
   },
   sections: defaultSections,
   features: [
-    { id: '1', text: 'Live Markdown preview' },
-    { id: '2', text: 'Professional templates' },
-    { id: '3', text: 'GitHub repository import' },
-    { id: '4', text: 'Badge generator' },
-    { id: '5', text: 'README quality score' },
-    { id: '6', text: 'One-click Markdown export' },
+    { id: '1', title: 'Live Markdown preview', description: '' },
+    { id: '2', title: 'Professional templates', description: '' },
+    { id: '3', title: 'GitHub repository import', description: '' },
+    { id: '4', title: 'Badge generator', description: '' },
+    { id: '5', title: 'README quality score', description: '' },
+    { id: '6', title: 'One-click Markdown export', description: '' }
   ],
-  techStack: [
-    { id: 'react', name: 'React', category: 'Frontend' },
-    { id: 'typescript', name: 'TypeScript', category: 'Language' },
-    { id: 'vite', name: 'Vite', category: 'Tooling' },
-    { id: 'tailwind', name: 'Tailwind CSS', category: 'Styling' },
+  technologies: [
+    { id: '1', name: 'React', category: 'Frontend' },
+    { id: '2', name: 'TypeScript', category: 'Language' },
+    { id: '3', name: 'Vite', category: 'Tooling' },
+    { id: '4', name: 'Tailwind CSS', category: 'Styling' }
   ],
   badges: [],
-  envVars: [],
+  installation: {
+    methods: [
+      { id: 'clone', name: 'Clone', command: 'git clone https://github.com/username/project.git' },
+      { id: 'cd', name: 'Navigate', command: 'cd project-directory' },
+      { id: 'install', name: 'Install', command: 'npm install' }
+    ]
+  },
+  usage: {
+    commands: [
+      { id: 'dev', description: 'Run the development server:', command: 'npm run dev' }
+    ]
+  },
   screenshots: [],
-  projectStructure: '',
-  installCommand: 'npm install',
-  runCommand: 'npm run dev',
-  packageManager: 'npm',
+  demo: { liveUrl: '', videoUrl: '', instructions: '' },
+  environmentVariables: [],
+  api: { endpoints: [] },
+  projectStructure: 'src/\n├── components/\n├── hooks/\n├── utils/\n└── App.tsx',
+  roadmap: [],
+  faq: [],
+  troubleshooting: [],
+  contributing: { instructions: 'Contributions are always welcome!\n\n1. Fork the project\n2. Create your feature branch (`git checkout -b feature/AmazingFeature`)\n3. Commit your changes (`git commit -m \'Add some AmazingFeature\'`)\n4. Push to the branch (`git push origin feature/AmazingFeature`)\n5. Open a Pull Request' },
+  deployment: { instructions: '' },
+  author: { name: '', url: '', email: '' },
+  contact: { links: [] },
+  settings: {},
+  generatedMarkdown: '',
+  qualityScore: { score: 0, recommendations: [] },
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
 };
 
 interface ReadmeContextType {
-  state: ReadmeState;
-  setState: React.Dispatch<React.SetStateAction<ReadmeState>>;
-  updateProjectDetails: (details: Partial<ProjectDetails>) => void;
+  state: READMEProject;
+  setState: React.Dispatch<React.SetStateAction<READMEProject>>;
+  updateProjectDetails: (details: Partial<READMEProject['metadata']>) => void;
   toggleSection: (id: string) => void;
-  reorderSections: (newSections: Section[]) => void;
+  reorderSections: (startIndex: number, endIndex: number) => void;
   resetState: () => void;
 }
 
 const ReadmeContext = createContext<ReadmeContextType | undefined>(undefined);
 
 export function ReadmeProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<ReadmeState>(() => {
-    const saved = localStorage.getItem('readmeforge_state');
+  // Temporary: we manage one project right now, later we map this to multi-projects
+  const [state, setState] = useState<READMEProject>(() => {
+    const saved = localStorage.getItem('readmeforge:current-project');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (parsed && parsed.sections) {
-          return { ...defaultState, ...parsed };
+          return { ...defaultProject, ...parsed };
         }
       } catch (e) {
         console.error('Failed to parse saved state');
       }
     }
-    return defaultState;
+    return defaultProject;
   });
 
   useEffect(() => {
-    localStorage.setItem('readmeforge_state', JSON.stringify(state));
+    localStorage.setItem('readmeforge:current-project', JSON.stringify(state));
   }, [state]);
 
-  const updateProjectDetails = (details: Partial<ProjectDetails>) => {
-    setState((prev) => ({
+  const updateProjectDetails = (details: Partial<READMEProject['metadata']>) => {
+    setState(prev => ({
       ...prev,
-      projectDetails: { ...prev.projectDetails, ...details },
+      metadata: { ...prev.metadata, ...details }
     }));
   };
 
   const toggleSection = (id: string) => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
-      sections: prev.sections.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)),
+      sections: prev.sections.map(s => 
+        s.id === id ? { ...s, enabled: !s.enabled } : s
+      )
     }));
   };
 
-  const reorderSections = (newSections: Section[]) => {
-    setState((prev) => ({ ...prev, sections: newSections }));
+  const reorderSections = (startIndex: number, endIndex: number) => {
+    setState(prev => {
+      const result = Array.from(prev.sections);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return { ...prev, sections: result };
+    });
   };
 
   const resetState = () => {
     if (window.confirm('Are you sure you want to reset your project? This cannot be undone.')) {
-      setState(defaultState);
+      setState(defaultProject);
     }
   };
 
   return (
-    <ReadmeContext.Provider
-      value={{ state, setState, updateProjectDetails, toggleSection, reorderSections, resetState }}
-    >
+    <ReadmeContext.Provider value={{ state, setState, updateProjectDetails, toggleSection, reorderSections, resetState }}>
       {children}
     </ReadmeContext.Provider>
   );
