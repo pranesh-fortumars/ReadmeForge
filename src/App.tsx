@@ -21,14 +21,14 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 flex flex-col transition-colors duration-200">
+    <div className="flex flex-col h-screen overflow-hidden bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors duration-200">
       <Navbar onThemeToggle={toggleTheme} theme={theme} onHomeClick={() => setShowEditor(false)} />
       
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex overflow-hidden w-full relative">
         {!showEditor ? (
           <LandingPage onStart={() => setShowEditor(true)} />
         ) : (
-          <div className="flex-1 flex flex-col md:flex-row h-[calc(100vh-64px)]">
+          <div className="flex-1 flex flex-col md:flex-row w-full h-full">
             <div className="w-full md:w-1/2 h-full overflow-hidden border-r border-gray-200 dark:border-gray-800">
               <Editor />
             </div>

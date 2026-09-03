@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import { Check, Copy, Download, Code, FileText } from 'lucide-react'
 import { useReadme } from '../../hooks/useReadme'
 import { generateMarkdown } from '../../utils/markdownGenerator'
@@ -80,7 +81,7 @@ export default function Preview() {
               prose-headings:font-semibold prose-a:text-blue-600 dark:prose-a:text-blue-400 
               prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:before:content-none prose-code:after:content-none
               prose-pre:bg-gray-100 dark:prose-pre:bg-gray-900 prose-pre:text-gray-900 dark:prose-pre:text-gray-200 border border-transparent dark:border-transparent">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                 {markdown}
               </ReactMarkdown>
             </div>
