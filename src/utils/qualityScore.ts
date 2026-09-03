@@ -1,4 +1,4 @@
-import { ReadmeState } from '../types';
+import type { ReadmeState } from '../types';
 
 export interface QualityResult {
   score: number;

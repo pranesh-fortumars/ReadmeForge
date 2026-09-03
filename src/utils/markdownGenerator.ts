@@ -1,7 +1,7 @@
-import { ReadmeState, Section } from '../types';
+import type { ReadmeState } from '../types';
 
 export function generateMarkdown(state: ReadmeState): string {
-  const { projectDetails, sections, features, techStack, badges, envVars, screenshots, projectStructure, installCommand, runCommand, packageManager } = state;
+  const { projectDetails, sections, features, techStack, badges, envVars, screenshots, projectStructure, installCommand, runCommand } = state;
   let markdown = '';
 
   // Helper to check if a section is enabled

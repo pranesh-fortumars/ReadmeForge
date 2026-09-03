@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { ReadmeState, ProjectDetails, Section, Feature, TechStackItem, Badge, EnvironmentVariable } from '../types';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import type { ReadmeState, ProjectDetails, Section } from '../types';
 
 export const defaultSections: Section[] = [
   { id: 'header', title: 'Header', enabled: true },
@@ -69,7 +70,10 @@ export function ReadmeProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('readmeforge_state');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.sections) {
+          return { ...defaultState, ...parsed };
+        }
       } catch (e) {
         console.error('Failed to parse saved state');
       }
