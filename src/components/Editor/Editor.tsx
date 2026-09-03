@@ -9,7 +9,10 @@ import { Plus, Trash2 } from 'lucide-react'
 
 export default function Editor() {
   const { id } = useParams<{ id: string }>()
-  const { state, updateProjectDetails, toggleSection, reorderSections, resetState, undo, redo, canUndo, canRedo } = useReadme()
+  const { 
+    state, setState, updateProjectDetails, toggleSection, reorderSections, 
+    resetState, activeSectionId, setActiveSection, undo, redo, canUndo, canRedo 
+  } = useReadme()
   const quality = calculateQualityScore(state)
 
   useEffect(() => {
