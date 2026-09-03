@@ -140,6 +140,8 @@ interface ReadmeContextType {
   updateProjectDetails: (details: Partial<READMEProject['metadata']>) => void;
   toggleSection: (id: string) => void;
   reorderSections: (startIndex: number, endIndex: number) => void;
+  activeSectionId: string | null;
+  setActiveSection: (id: string | null) => void;
   resetState: (type?: 'project' | 'profile') => void;
   loadProject: (project: READMEProject) => void;
   undo: () => void;
@@ -169,6 +171,7 @@ export function ReadmeProvider({ children }: { children: ReactNode }) {
 
   const [history, setHistory] = useState<READMEProject[]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
+  const [activeSectionId, setActiveSection] = useState<string | null>('project-details')
 
   useEffect(() => {
     localStorage.setItem('readmeforge:current-project', JSON.stringify(state));
@@ -241,6 +244,7 @@ export function ReadmeProvider({ children }: { children: ReactNode }) {
   return (
     <ReadmeContext.Provider value={{ 
       state, setState, updateProjectDetails, toggleSection, reorderSections, resetState, loadProject,
+      activeSectionId, setActiveSection,
       undo, redo, canUndo: historyIndex > 0, canRedo: historyIndex < history.length - 1
     }}>
       {children}
