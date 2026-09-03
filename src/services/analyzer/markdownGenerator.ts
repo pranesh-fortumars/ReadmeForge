@@ -1,4 +1,4 @@
-import type { READMEProject } from '../types';
+import type { READMEProject } from '../../types';
 
 export function generateMarkdown(state: READMEProject): string {
   const { metadata, sections, features, technologies, badges, environmentVariables, screenshots, projectStructure, installation, usage } = state;

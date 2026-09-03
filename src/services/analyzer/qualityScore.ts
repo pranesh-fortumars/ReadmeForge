@@ -1,4 +1,4 @@
-import type { READMEProject } from '../types';
+import type { READMEProject } from '../../types';
 
 export interface QualityResult {
   score: number;

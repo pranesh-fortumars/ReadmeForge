@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GitBranch, ArrowRight, AlertCircle, Loader2 } from 'lucide-react'
 import { useReadme } from '../hooks/useReadme'
-import { analyzeRepository } from '../utils/githubApi'
+import { analyzeRepository } from '../services/github/githubApi'
 
 export default function ImportRepo() {
   const [url, setUrl] = useState('')

@@ -4,7 +4,7 @@ import type { DropResult } from '@hello-pangea/dnd'
 import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useReadme } from '../../hooks/useReadme'
-import { calculateQualityScore } from '../../utils/qualityScore'
+import { calculateQualityScore } from '../../services/analyzer/qualityScore'
 
 export default function Editor() {
   const { id } = useParams<{ id: string }>()

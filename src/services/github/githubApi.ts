@@ -1,4 +1,4 @@
-import type { TechStackItem } from '../types';
+import type { TechStackItem } from '../../types';
 
 interface GitHubRepoInfo {
   name: string;

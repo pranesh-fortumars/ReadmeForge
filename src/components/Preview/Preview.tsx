@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { Check, Copy, Download, Code, FileText } from 'lucide-react'
 import { useReadme } from '../../hooks/useReadme'
-import { generateMarkdown } from '../../utils/markdownGenerator'
+import { generateMarkdown } from '../../services/analyzer/markdownGenerator'
 
 export default function Preview() {
   const { state } = useReadme()
