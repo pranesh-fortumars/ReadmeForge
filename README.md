@@ -4,10 +4,10 @@
   <img src="https://img.shields.io/badge/vite-6.1.0-blue.svg" alt="Vite" />
 </div>
 
-<h1 align="center">READMEForge</h1>
+<h1 align="center">READMEForge 2.0</h1>
 
 <p align="center">
-  <strong>A modern GitHub README generator that helps developers create professional documentation in minutes.</strong>
+  <strong>Build, analyze, and maintain better GitHub documentation.</strong>
 </p>
 
 ## Table of Contents
@@ -16,7 +16,6 @@
 - [Tech Stack](#tech-stack)
 - [Installation](#installation)
 - [How to Use READMEForge](#how-to-use-readmeforge)
-- [Areas for Improvement](#areas-for-improvement)
 - [Project Structure](#project-structure)
 - [License](#license)
 
@@ -24,21 +23,24 @@
 
 ## Features
 
-- ✓ Live Markdown preview
-- ✓ Professional templates
-- ✓ GitHub repository import
-- ✓ Badge generator
-- ✓ README quality score
-- ✓ One-click Markdown export
+- ✓ **Multi-Project Versioned Storage**: Seamlessly save and switch between an infinite number of README projects locally.
+- ✓ **3-Column Architecture**: A powerful new editor workspace featuring a Sections Manager, an Active Editor Canvas, and a Live Markdown Preview.
+- ✓ **Dynamic Structured Forms**: Edit "Environment Variables", "Project Details", and more with strictly-typed custom UI forms—no raw markdown needed.
+- ✓ **Drag-and-Drop Reordering**: Rearrange sections of your README by dragging them in the sidebar.
+- ✓ **Reusable Design System**: Modern, scalable UI components (`Button`, `Card`) driving the visual experience.
+- ✓ **Live Markdown Preview**: See your edits compile in real-time.
+- ✓ **Quality Score Analyzer**: Provides actionable linters and recommendations to ensure your README is professional.
 
 ## Tech Stack
 
 **Frontend:**
-- React
+- React (Hooks, Context)
 - Tailwind CSS
+- Lucide React (Icons)
+- @hello-pangea/dnd (Drag and drop)
 
 **Language:**
-- TypeScript
+- TypeScript (Strict Typing)
 
 **Tooling:**
 - Vite
@@ -67,45 +69,34 @@ npm run dev
 
 ## How to Use READMEForge
 
-Once the development server is running and you have opened the app in your browser:
-
-1. **Start a New Project**: Click "Create README" from the landing page to enter the workspace.
-2. **Configure Project Details**: Fill out the project name, description, and repository URL in the left-hand Editor panel.
-3. **Toggle Sections**: Use the checkboxes in the "Enabled Sections" to instantly add or remove blocks (e.g., Features, Tech Stack, Badges) from your documentation.
-4. **Follow Recommendations**: Check the "Quality Score" in the top right. Follow the actionable recommendations to ensure your README is professional and thorough.
-5. **View & Export**: Switch the right-hand panel from "Preview" to "Markdown" to see the generated code. Use the "Copy" or "Download" buttons at the top of the preview to export your final `README.md`.
-
-## Areas for Improvement
-
-While READMEForge currently offers a robust core experience, here are some planned improvements for the future roadmap:
-
-- **Authentication & GitHub Integration**: Allow users to sign in with GitHub to automatically push the generated `README.md` directly to their repository.
-- **Dynamic Badge Builder**: An interactive UI for searching, coloring, and customizing Shields.io badges without writing markdown manually.
-- **Pre-built Templates Modal**: A catalog of starting templates (Minimal, SaaS, Open Source, Portfolio) that pre-fill the editor.
-- **Drag-and-Drop Reordering**: Allow users to drag sections in the sidebar to dynamically change the order of the generated markdown.
-- **Rich Text Editor**: Introduce a WYSIWYG rich text editor for individual section content alongside the plain text fields.
+1. **Dashboard (Project Switcher)**: View your recently saved projects or click "Create README" to start a new one.
+2. **Sections Manager (Left Column)**: Check or uncheck sections to add/remove them from your document. Drag the grip icon to reorder them globally.
+3. **Active Canvas (Center Column)**: Click on a section in the left sidebar to open its dedicated form here. Fill out your details, environment variables, etc.
+4. **Markdown Preview (Right Column)**: Instantly see what your `README.md` will look like on GitHub. Toggle between "Preview" and "Markdown" views.
+5. **Quality Checks**: Watch the quality score in the top right. Follow any linter warnings or recommendations to improve your documentation's completeness.
+6. **Export**: Copy your final Markdown code or download it directly to your machine using the tools above the preview!
 
 ## Project Structure
 
 ```text
 src/
 ├── components/
-│   ├── Editor/
-│   ├── Preview/
-│   ├── LandingPage.tsx
-│   └── Navbar.tsx
+│   ├── Editor/       # 3-column layout components and structured forms
+│   ├── Preview/      # Real-time markdown renderer
+│   ├── ui/           # Generic design system components (Button, Card, etc.)
+│   ├── Dashboard.tsx # Multi-project switcher
+│   └── ...
+├── services/
+│   ├── analyzer/     # Quality scoring and Markdown generation logic
+│   ├── github/       # GitHub API integration
+│   └── storage/      # Multi-project localStorage persistence and migration
 ├── hooks/
-│   └── useReadme.tsx
-├── utils/
-│   ├── githubApi.ts
-│   ├── markdownGenerator.ts
-│   └── qualityScore.ts
-├── types/
-│   └── index.ts
-├── App.tsx
-└── main.tsx
+│   └── useReadme.tsx # Global state context and history (Undo/Redo)
+├── types/            # Strict domain models (project.ts, repository.ts, etc.)
+├── App.tsx           # Router and migration initialization
+└── index.css         # Global Tailwind configuration
 ```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
