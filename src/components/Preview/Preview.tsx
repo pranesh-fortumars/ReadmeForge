@@ -5,6 +5,7 @@ import rehypeRaw from 'rehype-raw'
 import { Check, Copy, Download, Code, FileText } from 'lucide-react'
 import { useReadme } from '../../hooks/useReadme'
 import { generateMarkdown } from '../../services/analyzer/markdownGenerator'
+import 'github-markdown-css/github-markdown.css'
 
 export default function Preview() {
   const { state } = useReadme()
@@ -77,10 +78,7 @@ export default function Preview() {
       <div className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="max-w-3xl mx-auto">
           {viewMode === 'preview' ? (
-            <div className="prose prose-slate dark:prose-invert max-w-none 
-              prose-headings:font-semibold prose-a:text-blue-600 dark:prose-a:text-blue-400 
-              prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:before:content-none prose-code:after:content-none
-              prose-pre:bg-gray-100 dark:prose-pre:bg-gray-900 prose-pre:text-gray-900 dark:prose-pre:text-gray-200 border border-transparent dark:border-transparent">
+            <div className="markdown-body" style={{ background: 'transparent' }}>
               <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                 {markdown}
               </ReactMarkdown>

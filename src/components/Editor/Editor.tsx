@@ -1,5 +1,6 @@
 import { Settings, AlertCircle, GripVertical } from 'lucide-react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import MarkdownEditor from '@uiw/react-markdown-editor'
 import type { DropResult } from '@hello-pangea/dnd'
 import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
@@ -187,6 +188,25 @@ export default function Editor() {
                     placeholder="https://github.com/username/repo"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Long Description (Markdown)</label>
+                  <div data-color-mode="light" className="dark:hidden">
+                    <MarkdownEditor
+                      value={state.metadata.longDescription || ''}
+                      height="300px"
+                      onChange={(value) => updateProjectDetails({ longDescription: value })}
+                      className="rounded-md overflow-hidden border border-gray-300"
+                    />
+                  </div>
+                  <div data-color-mode="dark" className="hidden dark:block">
+                    <MarkdownEditor
+                      value={state.metadata.longDescription || ''}
+                      height="300px"
+                      onChange={(value) => updateProjectDetails({ longDescription: value })}
+                      className="rounded-md overflow-hidden border border-gray-700"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           ) : activeSectionId === 'env-vars' ? (
@@ -259,6 +279,164 @@ export default function Editor() {
                 {(!state.environmentVariables || state.environmentVariables.length === 0) && (
                   <p className="text-center text-gray-500 py-8">No environment variables defined.</p>
                 )}
+              </div>
+            </div>
+          ) : activeSectionId === 'badges' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Badges</h2>
+                <button 
+                  onClick={() => {
+                    const newBadges = [...state.badges, { id: Date.now().toString(), label: '', url: '', imageUrl: '' }]
+                    setState({ ...state, badges: newBadges })
+                  }}
+                  className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700"
+                >
+                  <Plus className="w-4 h-4" /> Add Badge
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.badges?.map((badge, idx) => (
+                  <div key={badge.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex gap-2">
+                        <input 
+                          type="text" value={badge.label} onChange={(e) => {
+                            const newBadges = [...state.badges]; newBadges[idx].label = e.target.value; setState({ ...state, badges: newBadges });
+                          }}
+                          placeholder="Alt text (e.g. build status)" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                        />
+                        <input 
+                          type="text" value={badge.imageUrl} onChange={(e) => {
+                            const newBadges = [...state.badges]; newBadges[idx].imageUrl = e.target.value; setState({ ...state, badges: newBadges });
+                          }}
+                          placeholder="Image URL (e.g. https://img.shields.io/...)" className="flex-2 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none w-full"
+                        />
+                      </div>
+                      <input 
+                        type="text" value={badge.url} onChange={(e) => {
+                          const newBadges = [...state.badges]; newBadges[idx].url = e.target.value; setState({ ...state, badges: newBadges });
+                        }}
+                        placeholder="Link URL (optional, e.g. https://github.com/...)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                      />
+                    </div>
+                    <button onClick={() => setState({ ...state, badges: state.badges.filter(b => b.id !== badge.id) })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'tech-stack' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Tech Stack</h2>
+                <button 
+                  onClick={() => {
+                    const newTech = [...state.technologies, { id: Date.now().toString(), name: '', category: 'Frontend' }]
+                    setState({ ...state, technologies: newTech })
+                  }}
+                  className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700"
+                >
+                  <Plus className="w-4 h-4" /> Add Technology
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.technologies?.map((tech, idx) => (
+                  <div key={tech.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 flex gap-2">
+                      <input 
+                        type="text" value={tech.name} onChange={(e) => {
+                          const newTech = [...state.technologies]; newTech[idx].name = e.target.value; setState({ ...state, technologies: newTech });
+                        }}
+                        placeholder="Name (e.g. React)" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                      />
+                      <select
+                        value={tech.category} onChange={(e) => {
+                          const newTech = [...state.technologies]; newTech[idx].category = e.target.value; setState({ ...state, technologies: newTech });
+                        }}
+                        className="bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                      >
+                        <option value="Frontend">Frontend</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Database">Database</option>
+                        <option value="Tooling">Tooling</option>
+                        <option value="Language">Language</option>
+                      </select>
+                    </div>
+                    <button onClick={() => setState({ ...state, technologies: state.technologies.filter(t => t.id !== tech.id) })} className="text-gray-400 hover:text-red-500 self-center"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'installation' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Installation Methods</h2>
+                <button 
+                  onClick={() => {
+                    const newMethods = [...(state.installation?.methods || []), { id: Date.now().toString(), name: '', command: '' }]
+                    setState({ ...state, installation: { methods: newMethods } })
+                  }}
+                  className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700"
+                >
+                  <Plus className="w-4 h-4" /> Add Method
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.installation?.methods?.map((method, idx) => (
+                  <div key={method.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <input 
+                        type="text" value={method.name} onChange={(e) => {
+                          const newMethods = [...state.installation.methods]; newMethods[idx].name = e.target.value; setState({ ...state, installation: { methods: newMethods } });
+                        }}
+                        placeholder="Method Name (e.g. npm)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                      />
+                      <input 
+                        type="text" value={method.command} onChange={(e) => {
+                          const newMethods = [...state.installation.methods]; newMethods[idx].command = e.target.value; setState({ ...state, installation: { methods: newMethods } });
+                        }}
+                        placeholder="Command (e.g. npm install)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm font-mono outline-none"
+                      />
+                    </div>
+                    <button onClick={() => setState({ ...state, installation: { methods: state.installation.methods.filter(m => m.id !== method.id) } })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'usage' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Usage Commands</h2>
+                <button 
+                  onClick={() => {
+                    const newCmds = [...(state.usage?.commands || []), { id: Date.now().toString(), description: '', command: '' }]
+                    setState({ ...state, usage: { commands: newCmds } })
+                  }}
+                  className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700"
+                >
+                  <Plus className="w-4 h-4" /> Add Command
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.usage?.commands?.map((cmd, idx) => (
+                  <div key={cmd.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <input 
+                        type="text" value={cmd.description} onChange={(e) => {
+                          const newCmds = [...state.usage.commands]; newCmds[idx].description = e.target.value; setState({ ...state, usage: { commands: newCmds } });
+                        }}
+                        placeholder="Description (e.g. Run development server)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                      />
+                      <input 
+                        type="text" value={cmd.command} onChange={(e) => {
+                          const newCmds = [...state.usage.commands]; newCmds[idx].command = e.target.value; setState({ ...state, usage: { commands: newCmds } });
+                        }}
+                        placeholder="Command (e.g. npm run dev)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm font-mono outline-none"
+                      />
+                    </div>
+                    <button onClick={() => setState({ ...state, usage: { commands: state.usage.commands.filter(c => c.id !== cmd.id) } })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
               </div>
             </div>
           ) : (

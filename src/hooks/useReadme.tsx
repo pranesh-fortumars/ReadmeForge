@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
+import { create } from 'zustand';
 import type { READMEProject, Section } from '../types';
 import { StorageManager } from '../services/storage/storageService';
 
@@ -134,128 +133,131 @@ export const defaultProfile: READMEProject = {
   updatedAt: new Date().toISOString()
 };
 
-interface ReadmeContextType {
+interface ReadmeStore {
   state: READMEProject;
-  setState: React.Dispatch<React.SetStateAction<READMEProject>>;
+  activeSectionId: string | null;
+  history: READMEProject[];
+  historyIndex: number;
+  
+  // Actions
+  setState: (newState: READMEProject | ((prev: READMEProject) => READMEProject)) => void;
+  setActiveSection: (id: string | null) => void;
   updateProjectDetails: (details: Partial<READMEProject['metadata']>) => void;
   toggleSection: (id: string) => void;
   reorderSections: (startIndex: number, endIndex: number) => void;
-  activeSectionId: string | null;
-  setActiveSection: (id: string | null) => void;
   resetState: (type?: 'project' | 'profile') => void;
   loadProject: (project: READMEProject) => void;
+  
+  // History Actions
   undo: () => void;
   redo: () => void;
-  canUndo: boolean;
-  canRedo: boolean;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
 }
 
-const ReadmeContext = createContext<ReadmeContextType | undefined>(undefined);
-
-export function ReadmeProvider({ children }: { children: ReactNode }) {
-  // Temporary: we manage one project right now, later we map this to multi-projects
-  const [state, setState] = useState<READMEProject>(() => {
-    const saved = localStorage.getItem('readmeforge:current-project');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed && parsed.sections) {
-          return { ...defaultProject, ...parsed };
-        }
-      } catch (e) {
-        console.error('Failed to parse saved state');
+const getInitialState = (): READMEProject => {
+  const saved = localStorage.getItem('readmeforge:current-project');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.sections) {
+        return { ...defaultProject, ...parsed };
       }
-    }
-    return defaultProject;
-  });
-
-  const [history, setHistory] = useState<READMEProject[]>([])
-  const [historyIndex, setHistoryIndex] = useState(-1)
-  const [activeSectionId, setActiveSection] = useState<string | null>('project-details')
-
-  useEffect(() => {
-    localStorage.setItem('readmeforge:current-project', JSON.stringify(state));
-    StorageManager.saveProject(state);
-  }, [state]);
-
-  const commitToHistory = (newState: READMEProject) => {
-    setHistory(prev => {
-      const newHistory = prev.slice(0, historyIndex + 1)
-      if (newHistory.length > 20) newHistory.shift() // Keep last 20 changes
-      return [...newHistory, newState]
-    })
-    setHistoryIndex(prev => Math.min(19, prev + 1))
-    setState(newState)
-  }
-
-  const loadProject = (project: READMEProject) => {
-    setState(project);
-    setHistory([]);
-    setHistoryIndex(-1);
-  }
-
-  const undo = () => {
-    if (historyIndex > 0) {
-      setHistoryIndex(prev => prev - 1)
-      setState(history[historyIndex - 1])
+    } catch (e) {
+      console.error('Failed to parse saved state');
     }
   }
+  return defaultProject;
+};
 
-  const redo = () => {
-    if (historyIndex < history.length - 1) {
-      setHistoryIndex(prev => prev + 1)
-      setState(history[historyIndex + 1])
-    }
-  }
+export const useReadme = create<ReadmeStore>((set, get) => ({
+  state: getInitialState(),
+  activeSectionId: 'project-details',
+  history: [],
+  historyIndex: -1,
 
-  const updateProjectDetails = (details: Partial<READMEProject['metadata']>) => {
-    const newState = {
-      ...state,
-      metadata: { ...state.metadata, ...details }
-    }
-    commitToHistory(newState)
-  };
+  setState: (newStateOrUpdater) => {
+    set((store) => {
+      const newState = typeof newStateOrUpdater === 'function' ? newStateOrUpdater(store.state) : newStateOrUpdater;
+      
+      // Update history
+      const newHistory = store.history.slice(0, store.historyIndex + 1);
+      if (newHistory.length > 20) newHistory.shift();
+      newHistory.push(newState);
+      
+      // Save to persistence layer
+      localStorage.setItem('readmeforge:current-project', JSON.stringify(newState));
+      StorageManager.saveProject(newState);
+      
+      return {
+        state: newState,
+        history: newHistory,
+        historyIndex: newHistory.length - 1
+      };
+    });
+  },
 
-  const toggleSection = (id: string) => {
-    const newState = {
-      ...state,
-      sections: state.sections.map(s => 
-        s.id === id ? { ...s, enabled: !s.enabled } : s
+  setActiveSection: (id) => set({ activeSectionId: id }),
+
+  updateProjectDetails: (details) => {
+    get().setState((prev) => ({
+      ...prev,
+      metadata: { ...prev.metadata, ...details }
+    }));
+  },
+
+  toggleSection: (id) => {
+    get().setState((prev) => ({
+      ...prev,
+      sections: prev.sections.map(section => 
+        section.id === id ? { ...section, enabled: !section.enabled } : section
       )
+    }));
+  },
+
+  reorderSections: (startIndex, endIndex) => {
+    get().setState((prev) => {
+      const newSections = Array.from(prev.sections);
+      const [reorderedItem] = newSections.splice(startIndex, 1);
+      newSections.splice(endIndex, 0, reorderedItem);
+      return { ...prev, sections: newSections };
+    });
+  },
+
+  resetState: (type = 'project') => {
+    get().setState(type === 'profile' ? { ...defaultProfile, id: 'profile-' + Date.now() } : { ...defaultProject, id: 'project-' + Date.now() });
+  },
+
+  loadProject: (project) => {
+    // We overwrite state and clear history when loading a new project
+    localStorage.setItem('readmeforge:current-project', JSON.stringify(project));
+    set({
+      state: project,
+      history: [],
+      historyIndex: -1
+    });
+  },
+
+  undo: () => {
+    const { history, historyIndex } = get();
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      const prevState = history[newIndex];
+      localStorage.setItem('readmeforge:current-project', JSON.stringify(prevState));
+      set({ state: prevState, historyIndex: newIndex });
     }
-    commitToHistory(newState)
-  };
+  },
 
-  const reorderSections = (startIndex: number, endIndex: number) => {
-    const result = Array.from(state.sections);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    const newState = { ...state, sections: result }
-    commitToHistory(newState)
-  };
-
-  const resetState = (type: 'project' | 'profile' = 'project') => {
-    if (window.confirm('Are you sure you want to reset your workspace? This cannot be undone.')) {
-      const newState = type === 'profile' ? defaultProfile : defaultProject
-      commitToHistory(newState)
+  redo: () => {
+    const { history, historyIndex } = get();
+    if (historyIndex < history.length - 1) {
+      const newIndex = historyIndex + 1;
+      const nextState = history[newIndex];
+      localStorage.setItem('readmeforge:current-project', JSON.stringify(nextState));
+      set({ state: nextState, historyIndex: newIndex });
     }
-  };
+  },
 
-  return (
-    <ReadmeContext.Provider value={{ 
-      state, setState, updateProjectDetails, toggleSection, reorderSections, resetState, loadProject,
-      activeSectionId, setActiveSection,
-      undo, redo, canUndo: historyIndex > 0, canRedo: historyIndex < history.length - 1
-    }}>
-      {children}
-    </ReadmeContext.Provider>
-  );
-}
-
-export function useReadme() {
-  const context = useContext(ReadmeContext);
-  if (context === undefined) {
-    throw new Error('useReadme must be used within a ReadmeProvider');
-  }
-  return context;
-}
+  canUndo: () => get().historyIndex > 0,
+  canRedo: () => get().historyIndex < get().history.length - 1
+}));
