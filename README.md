@@ -26,18 +26,22 @@
 - ✓ **Multi-Project Versioned Storage**: Seamlessly save and switch between an infinite number of README projects locally.
 - ✓ **3-Column Architecture**: A powerful new editor workspace featuring a Sections Manager, an Active Editor Canvas, and a Live Markdown Preview.
 - ✓ **Dynamic Structured Forms**: Edit "Environment Variables", "Project Details", and more with strictly-typed custom UI forms—no raw markdown needed.
+- ✓ **Rich Text Editor**: A built-in WYSIWYG markdown editor for writing long descriptions and contributing guidelines effortlessly.
+- ✓ **GitHub API Integration**: Paste a repo URL to instantly parse its `package.json` and auto-fill your Tech Stack and project details.
 - ✓ **Drag-and-Drop Reordering**: Rearrange sections of your README by dragging them in the sidebar.
 - ✓ **Reusable Design System**: Modern, scalable UI components (`Button`, `Card`) driving the visual experience.
-- ✓ **Live Markdown Preview**: See your edits compile in real-time.
+- ✓ **Live Markdown Preview**: See your edits compile in real-time with pixel-perfect 1:1 GitHub markdown styling.
 - ✓ **Quality Score Analyzer**: Provides actionable linters and recommendations to ensure your README is professional.
 
 ## Tech Stack
 
 **Frontend:**
-- React (Hooks, Context)
+- React (Hooks, Zustand)
 - Tailwind CSS
 - Lucide React (Icons)
 - @hello-pangea/dnd (Drag and drop)
+- @uiw/react-markdown-editor (WYSIWYG Markdown)
+- github-markdown-css (Pixel-perfect preview)
 
 **Language:**
 - TypeScript (Strict Typing)
@@ -91,7 +95,7 @@ src/
 │   ├── github/       # GitHub API integration
 │   └── storage/      # Multi-project localStorage persistence and migration
 ├── hooks/
-│   └── useReadme.tsx # Global state context and history (Undo/Redo)
+│   └── useReadme.tsx # Global state management and history (Zustand)
 ├── types/            # Strict domain models (project.ts, repository.ts, etc.)
 ├── App.tsx           # Router and migration initialization
 └── index.css         # Global Tailwind configuration
