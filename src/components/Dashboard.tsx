@@ -6,11 +6,13 @@ import { StorageManager } from '../services/storage/storageService'
 import type { READMEProject } from '../types'
 import { Button } from './ui/Button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/Card'
+import { templates } from '../utils/templates'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { loadProject } = useReadme()
+  const { loadProject, resetState } = useReadme()
   const [projects, setProjects] = useState<READMEProject[]>([])
+  const [showTemplateModal, setShowTemplateModal] = useState(false)
 
   useEffect(() => {
     setProjects(StorageManager.getProjects())
@@ -18,6 +20,22 @@ export default function Dashboard() {
 
   const handleLoadProject = (project: READMEProject) => {
     loadProject(project)
+    navigate('/editor/default')
+  }
+
+  const handleStartFromTemplate = (templateProject: READMEProject) => {
+    const newProject = {
+      ...templateProject,
+      id: `project-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+    loadProject(newProject)
+    navigate('/editor/default')
+  }
+
+  const handleCreateBlank = () => {
+    resetState()
     navigate('/editor/default')
   }
 
@@ -38,7 +56,7 @@ export default function Dashboard() {
             <p className="text-gray-600 dark:text-gray-400">Create documentation that makes your repository easier to understand.</p>
           </div>
           <div className="flex gap-4">
-            <Button onClick={() => navigate('/editor/new')} className="gap-2">
+            <Button onClick={() => setShowTemplateModal(true)} className="gap-2">
               <Plus className="w-5 h-5" />
               Create README
             </Button>
@@ -98,27 +116,18 @@ export default function Dashboard() {
                 
                 {/* Empty Create Card */}
                 <div 
-                  onClick={() => navigate('/editor/new')}
-                  className="p-5 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-gray-900 transition-colors cursor-pointer flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 h-40"
+                  onClick={() => setShowTemplateModal(true)}
+                  className="h-40 border-2 border-dashed border-gray-300 dark:border-gray-800 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors cursor-pointer"
                 >
-                  <Plus className="w-8 h-8 mb-2 text-gray-400" />
+                  <Plus className="w-8 h-8 mb-2" />
                   <span className="font-medium">New Project</span>
-                </div>
-                
-                {/* Profile README Card */}
-                <div 
-                  onClick={() => navigate('/editor/profile')}
-                  className="p-5 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-colors cursor-pointer flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 h-40"
-                >
-                  <Star className="w-8 h-8 mb-2 text-gray-400" />
-                  <span className="font-medium">New Profile</span>
                 </div>
               </div>
             </section>
           </div>
 
-          {/* Sidebar Column */}
-          <div className="space-y-8">
+          {/* Quick Actions Sidebar */}
+          <div className="space-y-6">
             <section>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Tools</h2>
               <div className="space-y-3">
@@ -173,6 +182,56 @@ export default function Dashboard() {
           
         </div>
       </div>
+
+      {/* Template Selection Modal */}
+      {showTemplateModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#0d1117] rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-white/80 dark:bg-[#0d1117]/80 backdrop-blur-sm">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Choose a Starting Template</h2>
+              <button 
+                onClick={() => setShowTemplateModal(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card 
+                onClick={handleCreateBlank}
+                className="hover:border-purple-500 hover:shadow-md transition-all cursor-pointer border-2"
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <span className="text-2xl">📄</span> Blank Project
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Start from scratch with the default structure.</p>
+                </CardContent>
+              </Card>
+
+              {templates.map(template => (
+                <Card 
+                  key={template.id}
+                  onClick={() => handleStartFromTemplate(template.project)}
+                  className="hover:border-purple-500 hover:shadow-md transition-all cursor-pointer border-2"
+                >
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <span className="text-2xl">{template.icon}</span> {template.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{template.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -36,6 +36,13 @@ export interface Badge {
   url: string;
   imageUrl: string;
   style?: string;
+  shieldParams?: {
+    label: string;
+    message: string;
+    color: string;
+    logo: string;
+    style: string;
+  };
 }
 
 export interface EnvironmentVariable {

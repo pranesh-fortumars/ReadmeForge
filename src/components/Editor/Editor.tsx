@@ -287,7 +287,13 @@ export default function Editor() {
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Badges</h2>
                 <button 
                   onClick={() => {
-                    const newBadges = [...state.badges, { id: Date.now().toString(), label: '', url: '', imageUrl: '' }]
+                    const newBadges = [...state.badges, { 
+                      id: Date.now().toString(), 
+                      label: '', 
+                      url: '', 
+                      imageUrl: 'https://img.shields.io/badge/label-message-blue?style=flat',
+                      shieldParams: { label: 'label', message: 'message', color: 'blue', logo: '', style: 'flat' }
+                    }]
                     setState({ ...state, badges: newBadges })
                   }}
                   className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700"
@@ -299,26 +305,112 @@ export default function Editor() {
                 {state.badges?.map((badge, idx) => (
                   <div key={badge.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
                     <div className="flex-1 space-y-3">
-                      <div className="flex gap-2">
-                        <input 
-                          type="text" value={badge.label} onChange={(e) => {
-                            const newBadges = [...state.badges]; newBadges[idx].label = e.target.value; setState({ ...state, badges: newBadges });
-                          }}
-                          placeholder="Alt text (e.g. build status)" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
-                        />
-                        <input 
-                          type="text" value={badge.imageUrl} onChange={(e) => {
-                            const newBadges = [...state.badges]; newBadges[idx].imageUrl = e.target.value; setState({ ...state, badges: newBadges });
-                          }}
-                          placeholder="Image URL (e.g. https://img.shields.io/...)" className="flex-2 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none w-full"
-                        />
-                      </div>
-                      <input 
-                        type="text" value={badge.url} onChange={(e) => {
-                          const newBadges = [...state.badges]; newBadges[idx].url = e.target.value; setState({ ...state, badges: newBadges });
-                        }}
-                        placeholder="Link URL (optional, e.g. https://github.com/...)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
-                      />
+                      {badge.shieldParams ? (
+                        <>
+                          <div className="flex gap-2">
+                            <input 
+                              type="text" value={badge.shieldParams.label} onChange={(e) => {
+                                const newBadges = [...state.badges]; 
+                                newBadges[idx].shieldParams!.label = e.target.value;
+                                newBadges[idx].label = e.target.value;
+                                const p = newBadges[idx].shieldParams!;
+                                newBadges[idx].imageUrl = `https://img.shields.io/badge/${encodeURIComponent(p.label)}-${encodeURIComponent(p.message)}-${p.color}?style=${p.style}${p.logo ? '&logo=' + p.logo : ''}`;
+                                setState({ ...state, badges: newBadges });
+                              }}
+                              placeholder="Label (e.g. build)" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                            />
+                            <input 
+                              type="text" value={badge.shieldParams.message} onChange={(e) => {
+                                const newBadges = [...state.badges]; 
+                                newBadges[idx].shieldParams!.message = e.target.value;
+                                const p = newBadges[idx].shieldParams!;
+                                newBadges[idx].imageUrl = `https://img.shields.io/badge/${encodeURIComponent(p.label)}-${encodeURIComponent(p.message)}-${p.color}?style=${p.style}${p.logo ? '&logo=' + p.logo : ''}`;
+                                setState({ ...state, badges: newBadges });
+                              }}
+                              placeholder="Message (e.g. passing)" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                            />
+                            <select 
+                              value={badge.shieldParams.color} onChange={(e) => {
+                                const newBadges = [...state.badges]; 
+                                newBadges[idx].shieldParams!.color = e.target.value;
+                                const p = newBadges[idx].shieldParams!;
+                                newBadges[idx].imageUrl = `https://img.shields.io/badge/${encodeURIComponent(p.label)}-${encodeURIComponent(p.message)}-${p.color}?style=${p.style}${p.logo ? '&logo=' + p.logo : ''}`;
+                                setState({ ...state, badges: newBadges });
+                              }}
+                              className="w-32 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                            >
+                              <option value="brightgreen">Bright Green</option>
+                              <option value="green">Green</option>
+                              <option value="yellowgreen">Yellow Green</option>
+                              <option value="yellow">Yellow</option>
+                              <option value="orange">Orange</option>
+                              <option value="red">Red</option>
+                              <option value="blue">Blue</option>
+                              <option value="lightgrey">Light Grey</option>
+                              <option value="success">Success</option>
+                              <option value="important">Important</option>
+                              <option value="critical">Critical</option>
+                            </select>
+                          </div>
+                          <div className="flex gap-2">
+                            <input 
+                              type="text" value={badge.shieldParams.logo} onChange={(e) => {
+                                const newBadges = [...state.badges]; 
+                                newBadges[idx].shieldParams!.logo = e.target.value;
+                                const p = newBadges[idx].shieldParams!;
+                                newBadges[idx].imageUrl = `https://img.shields.io/badge/${encodeURIComponent(p.label)}-${encodeURIComponent(p.message)}-${p.color}?style=${p.style}${p.logo ? '&logo=' + p.logo : ''}`;
+                                setState({ ...state, badges: newBadges });
+                              }}
+                              placeholder="Logo (e.g. react)" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                            />
+                            <select 
+                              value={badge.shieldParams.style} onChange={(e) => {
+                                const newBadges = [...state.badges]; 
+                                newBadges[idx].shieldParams!.style = e.target.value;
+                                const p = newBadges[idx].shieldParams!;
+                                newBadges[idx].imageUrl = `https://img.shields.io/badge/${encodeURIComponent(p.label)}-${encodeURIComponent(p.message)}-${p.color}?style=${p.style}${p.logo ? '&logo=' + p.logo : ''}`;
+                                setState({ ...state, badges: newBadges });
+                              }}
+                              className="w-32 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                            >
+                              <option value="flat">Flat</option>
+                              <option value="flat-square">Flat Square</option>
+                              <option value="plastic">Plastic</option>
+                              <option value="for-the-badge">For The Badge</option>
+                              <option value="social">Social</option>
+                            </select>
+                          </div>
+                          <input 
+                            type="text" value={badge.url} onChange={(e) => {
+                              const newBadges = [...state.badges]; newBadges[idx].url = e.target.value; setState({ ...state, badges: newBadges });
+                            }}
+                            placeholder="Link URL (optional, e.g. https://github.com/...)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex gap-2">
+                            <input 
+                              type="text" value={badge.label} onChange={(e) => {
+                                const newBadges = [...state.badges]; newBadges[idx].label = e.target.value; setState({ ...state, badges: newBadges });
+                              }}
+                              placeholder="Alt text (e.g. build status)" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                            />
+                            <input 
+                              type="text" value={badge.imageUrl} onChange={(e) => {
+                                const newBadges = [...state.badges]; newBadges[idx].imageUrl = e.target.value; setState({ ...state, badges: newBadges });
+                              }}
+                              placeholder="Image URL (e.g. https://img.shields.io/...)" className="flex-2 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none w-full"
+                            />
+                          </div>
+                          <input 
+                            type="text" value={badge.url} onChange={(e) => {
+                              const newBadges = [...state.badges]; newBadges[idx].url = e.target.value; setState({ ...state, badges: newBadges });
+                            }}
+                            placeholder="Link URL (optional, e.g. https://github.com/...)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                          />
+                        </>
+                      )}
                     </div>
                     <button onClick={() => setState({ ...state, badges: state.badges.filter(b => b.id !== badge.id) })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
                   </div>
@@ -437,6 +529,162 @@ export default function Editor() {
                     <button onClick={() => setState({ ...state, usage: { commands: state.usage.commands.filter(c => c.id !== cmd.id) } })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'features' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Features</h2>
+                <button 
+                  onClick={() => {
+                    const newFeatures = [...(state.features || []), { id: Date.now().toString(), title: '', description: '' }]
+                    setState({ ...state, features: newFeatures })
+                  }}
+                  className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700"
+                >
+                  <Plus className="w-4 h-4" /> Add Feature
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.features?.map((feature, idx) => (
+                  <div key={feature.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <input 
+                        type="text" value={feature.title} onChange={(e) => {
+                          const newFeatures = [...state.features]; newFeatures[idx].title = e.target.value; setState({ ...state, features: newFeatures });
+                        }}
+                        placeholder="Feature Title" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                      />
+                      <input 
+                        type="text" value={feature.description || ''} onChange={(e) => {
+                          const newFeatures = [...state.features]; newFeatures[idx].description = e.target.value; setState({ ...state, features: newFeatures });
+                        }}
+                        placeholder="Feature Description (optional)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                      />
+                    </div>
+                    <button onClick={() => setState({ ...state, features: state.features.filter(f => f.id !== feature.id) })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'screenshots' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Screenshots</h2>
+                <button 
+                  onClick={() => {
+                    const newScreenshots = [...(state.screenshots || []), { id: Date.now().toString(), url: '', altText: '', caption: '' }]
+                    setState({ ...state, screenshots: newScreenshots })
+                  }}
+                  className="flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700"
+                >
+                  <Plus className="w-4 h-4" /> Add Screenshot
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.screenshots?.map((screenshot, idx) => (
+                  <div key={idx} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <input 
+                        type="text" value={screenshot.url} onChange={(e) => {
+                          const newScreenshots = [...state.screenshots]; newScreenshots[idx].url = e.target.value; setState({ ...state, screenshots: newScreenshots });
+                        }}
+                        placeholder="Image URL" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                      />
+                      <div className="flex gap-2">
+                        <input 
+                          type="text" value={screenshot.altText} onChange={(e) => {
+                            const newScreenshots = [...state.screenshots]; newScreenshots[idx].altText = e.target.value; setState({ ...state, screenshots: newScreenshots });
+                          }}
+                          placeholder="Alt Text" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                        />
+                        <input 
+                          type="text" value={screenshot.caption || ''} onChange={(e) => {
+                            const newScreenshots = [...state.screenshots]; newScreenshots[idx].caption = e.target.value; setState({ ...state, screenshots: newScreenshots });
+                          }}
+                          placeholder="Caption (optional)" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm outline-none"
+                        />
+                      </div>
+                    </div>
+                    <button onClick={() => setState({ ...state, screenshots: state.screenshots.filter((_, i) => i !== idx) })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'project-structure' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Project Structure</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Provide a tree view of your repository's layout.</p>
+              <textarea
+                value={state.projectStructure || ''}
+                onChange={(e) => setState({ ...state, projectStructure: e.target.value })}
+                placeholder={`src/\n├── components/\n└── App.tsx`}
+                className="w-full h-64 p-4 font-mono text-sm bg-gray-50 dark:bg-[#0d1117] text-gray-900 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-y"
+              />
+            </div>
+          ) : activeSectionId === 'contributing' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Contributing Guidelines</h2>
+              <div data-color-mode="light" className="dark:hidden">
+                <MarkdownEditor
+                  value={state.contributing?.instructions || ''}
+                  height="400px"
+                  onChange={(value) => setState({ ...state, contributing: { instructions: value } })}
+                  className="rounded-md overflow-hidden border border-gray-300"
+                />
+              </div>
+              <div data-color-mode="dark" className="hidden dark:block">
+                <MarkdownEditor
+                  value={state.contributing?.instructions || ''}
+                  height="400px"
+                  onChange={(value) => setState({ ...state, contributing: { instructions: value } })}
+                  className="rounded-md overflow-hidden border border-gray-700"
+                />
+              </div>
+            </div>
+          ) : activeSectionId === 'license' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">License</h2>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Open Source License</label>
+                <select
+                  value={state.metadata.license || 'MIT'}
+                  onChange={(e) => updateProjectDetails({ license: e.target.value })}
+                  className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                >
+                  <option value="MIT">MIT License</option>
+                  <option value="Apache-2.0">Apache License 2.0</option>
+                  <option value="GPL-3.0">GNU General Public License v3.0</option>
+                  <option value="BSD-3-Clause">BSD 3-Clause "New" or "Revised" License</option>
+                  <option value="ISC">ISC License</option>
+                  <option value="Unlicense">The Unlicense</option>
+                </select>
+              </div>
+            </div>
+          ) : activeSectionId === 'author' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Author Information</h2>
+              <div className="grid grid-cols-1 gap-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Author Name</label>
+                  <input
+                    type="text"
+                    className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                    value={state.metadata.authorName || ''}
+                    onChange={(e) => updateProjectDetails({ authorName: e.target.value })}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Author Website</label>
+                  <input
+                    type="text"
+                    className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                    value={state.metadata.authorUrl || ''}
+                    onChange={(e) => updateProjectDetails({ authorUrl: e.target.value })}
+                    placeholder="https://johndoe.com"
+                  />
+                </div>
               </div>
             </div>
           ) : (
