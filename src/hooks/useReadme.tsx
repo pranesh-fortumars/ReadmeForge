@@ -14,7 +14,15 @@ export const defaultSections: Section[] = [
   { id: 'project-structure', title: 'Project Structure', enabled: true },
   { id: 'contributing', title: 'Contributing', enabled: true },
   { id: 'license', title: 'License', enabled: true },
-  { id: 'author', title: 'Author', enabled: true }
+  { id: 'author', title: 'Author', enabled: true },
+  { id: 'demo', title: 'Demo', enabled: false },
+  { id: 'api', title: 'API Reference', enabled: false },
+  { id: 'roadmap', title: 'Roadmap', enabled: false },
+  { id: 'faq', title: 'FAQ', enabled: false },
+  { id: 'troubleshooting', title: 'Troubleshooting', enabled: false },
+  { id: 'deployment', title: 'Deployment', enabled: false },
+  { id: 'contact', title: 'Contact', enabled: false },
+  { id: 'stats', title: 'GitHub Stats', enabled: false }
 ];
 
 export const defaultProject: READMEProject = {

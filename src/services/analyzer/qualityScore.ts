@@ -23,7 +23,7 @@ export function calculateQualityScore(state: READMEProject): QualityResult {
     media: { score: 0, max: 20 },
   };
 
-  const { metadata, sections, features, technologies, screenshots, installation, usage, demo } = state;
+  const { metadata, sections, features, technologies, screenshots, installation, usage, demo, projectStructure, contributing, deployment, api, faq, troubleshooting, contact } = state;
   const isEnabled = (id: string) => sections?.find(s => s.id === id)?.enabled;
 
   // -- STRUCTURE (Max 40) --
@@ -47,10 +47,28 @@ export function calculateQualityScore(state: READMEProject): QualityResult {
 
   if (isEnabled('license') && metadata.license) {
     completed.push('License');
-    categories.structure.score += 10;
+    categories.structure.score += 5;
   } else {
     recommendations.push('Specify a project license');
   }
+
+  if (isEnabled('project-structure') && projectStructure) {
+    completed.push('Project Structure');
+    categories.structure.score += 5;
+  }
+
+  if (isEnabled('contributing') && contributing?.instructions) {
+    completed.push('Contributing Guidelines');
+    categories.structure.score += 5;
+  }
+
+  if (isEnabled('deployment') && deployment?.instructions) {
+    completed.push('Deployment Instructions');
+    categories.structure.score += 5;
+  }
+
+  categories.structure.max = 45; // 15 + 15 + 5 + 5 + 5 + 5 = 45 (wait, previously it was 40 for 3 items. Now it's 15+15+5+5+5+5 = 50. Let's make structure max 50 and content 35 and media 15, total 100).
+  categories.structure.max = 50;
 
   // -- CONTENT (Max 40) --
   if (metadata.description && metadata.description.length > 10) {
@@ -71,12 +89,34 @@ export function calculateQualityScore(state: READMEProject): QualityResult {
 
   if (isEnabled('features') && features && features.length > 0) {
     completed.push('Features list');
-    categories.content.score += 10;
+    categories.content.score += 5;
   } else if (isEnabled('features')) {
     errors.push('Features section is enabled but empty.');
   } else {
     recommendations.push('Add project features');
   }
+
+  if (isEnabled('api') && api?.endpoints?.length > 0) {
+    completed.push('API Reference');
+    categories.content.score += 5;
+  }
+
+  if (isEnabled('faq') && faq?.length > 0) {
+    completed.push('FAQ');
+    categories.content.score += 5;
+  }
+
+  if (isEnabled('troubleshooting') && troubleshooting?.length > 0) {
+    completed.push('Troubleshooting');
+    categories.content.score += 5;
+  }
+
+  if (isEnabled('contact') && contact?.links?.length > 0) {
+    completed.push('Contact Information');
+    categories.content.score += 5;
+  }
+
+  categories.content.max = 40; // Max adjusted for new content sections
 
   // -- MEDIA (Max 20) --
   if (isEnabled('screenshots') && screenshots && screenshots.length > 0) {

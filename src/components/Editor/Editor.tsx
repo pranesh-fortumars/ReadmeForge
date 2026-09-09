@@ -687,6 +687,186 @@ export default function Editor() {
                 </div>
               </div>
             </div>
+          ) : activeSectionId === 'demo' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Demo Configuration</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Live Demo URL</label>
+                  <input type="text" value={state.demo?.liveUrl || ''} onChange={e => setState({ ...state, demo: { ...state.demo, liveUrl: e.target.value } })} className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2" placeholder="https://example.com" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Video URL (e.g., YouTube)</label>
+                  <input type="text" value={state.demo?.videoUrl || ''} onChange={e => setState({ ...state, demo: { ...state.demo, videoUrl: e.target.value } })} className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2" placeholder="https://youtube.com/watch?v=..." />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Demo Instructions</label>
+                  <textarea value={state.demo?.instructions || ''} onChange={e => setState({ ...state, demo: { ...state.demo, instructions: e.target.value } })} className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 h-24 font-mono text-sm" placeholder="Sign in with demo@example.com / password" />
+                </div>
+              </div>
+            </div>
+          ) : activeSectionId === 'env-vars' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Environment Variables</h2>
+                <button onClick={() => setState({ ...state, environmentVariables: [...state.environmentVariables, { name: '', description: '', required: false, default: '' }] })} className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                  <Plus className="w-4 h-4" /> Add Variable
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.environmentVariables?.map((env, idx) => (
+                  <div key={idx} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex gap-2 items-center">
+                        <input type="text" value={env.name} onChange={e => { const newEnv = [...state.environmentVariables]; newEnv[idx].name = e.target.value; setState({ ...state, environmentVariables: newEnv }) }} placeholder="API_KEY" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5" />
+                        <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                          <input type="checkbox" checked={env.required} onChange={e => { const newEnv = [...state.environmentVariables]; newEnv[idx].required = e.target.checked; setState({ ...state, environmentVariables: newEnv }) }} className="rounded border-gray-300 text-purple-600 focus:ring-purple-500" /> Required
+                        </label>
+                      </div>
+                      <input type="text" value={env.description} onChange={e => { const newEnv = [...state.environmentVariables]; newEnv[idx].description = e.target.value; setState({ ...state, environmentVariables: newEnv }) }} placeholder="Description" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5" />
+                    </div>
+                    <button onClick={() => setState({ ...state, environmentVariables: state.environmentVariables.filter((_, i) => i !== idx) })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'deployment' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Deployment Instructions</h2>
+              <textarea
+                className="w-full bg-gray-50 dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-lg p-4 h-64 font-mono text-sm focus:ring-2 focus:ring-purple-500 outline-none"
+                value={state.deployment?.instructions || ''}
+                onChange={(e) => setState({ ...state, deployment: { instructions: e.target.value } })}
+                placeholder="Deployment steps..."
+                spellCheck={false}
+              />
+            </div>
+          ) : activeSectionId === 'stats' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">GitHub Stats Settings</h2>
+              <div className="space-y-4">
+                <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                  <input type="checkbox" checked={state.settings?.showGithubStats || false} onChange={e => setState({ ...state, settings: { ...state.settings, showGithubStats: e.target.checked } })} className="rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
+                  Show GitHub Stats (Requires GitHub URL in Metadata)
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                  <input type="checkbox" checked={state.settings?.showTopLangs || false} onChange={e => setState({ ...state, settings: { ...state.settings, showTopLangs: e.target.checked } })} className="rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
+                  Show Top Languages
+                </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Theme</label>
+                  <select value={state.settings?.theme || 'radical'} onChange={e => setState({ ...state, settings: { ...state.settings, theme: e.target.value } })} className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2">
+                    <option value="radical">Radical</option>
+                    <option value="tokyonight">Tokyo Night</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="github_dark">GitHub Dark</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          ) : activeSectionId === 'api' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">API Reference</h2>
+                <button onClick={() => setState({ ...state, api: { ...state.api, endpoints: [...(state.api?.endpoints || []), { id: Date.now().toString(), method: 'GET', path: '', description: '', parameters: '', request: '', response: '' }] } })} className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                  <Plus className="w-4 h-4" /> Add Endpoint
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.api?.endpoints?.map((endpoint, idx) => (
+                  <div key={endpoint.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex gap-2">
+                        <select value={endpoint.method} onChange={e => { const newEndpoints = [...state.api.endpoints]; newEndpoints[idx].method = e.target.value; setState({ ...state, api: { endpoints: newEndpoints } }) }} className="bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 font-mono">
+                          <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option><option>PATCH</option>
+                        </select>
+                        <input type="text" value={endpoint.path} onChange={e => { const newEndpoints = [...state.api.endpoints]; newEndpoints[idx].path = e.target.value; setState({ ...state, api: { endpoints: newEndpoints } }) }} placeholder="/api/users" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 font-mono" />
+                      </div>
+                      <input type="text" value={endpoint.description} onChange={e => { const newEndpoints = [...state.api.endpoints]; newEndpoints[idx].description = e.target.value; setState({ ...state, api: { endpoints: newEndpoints } }) }} placeholder="Description" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5" />
+                      <textarea value={endpoint.parameters} onChange={e => { const newEndpoints = [...state.api.endpoints]; newEndpoints[idx].parameters = e.target.value; setState({ ...state, api: { endpoints: newEndpoints } }) }} placeholder="Parameters (JSON)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 h-20 font-mono text-sm" />
+                      <textarea value={endpoint.response} onChange={e => { const newEndpoints = [...state.api.endpoints]; newEndpoints[idx].response = e.target.value; setState({ ...state, api: { endpoints: newEndpoints } }) }} placeholder="Response (JSON)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 h-20 font-mono text-sm" />
+                    </div>
+                    <button onClick={() => setState({ ...state, api: { endpoints: state.api.endpoints.filter(e => e.id !== endpoint.id) } })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'roadmap' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Roadmap</h2>
+                <button onClick={() => setState({ ...state, roadmap: [...(state.roadmap || []), { id: Date.now().toString(), title: '', completed: false }] })} className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                  <Plus className="w-4 h-4" /> Add Item
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.roadmap?.map((item, idx) => (
+                  <div key={item.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4 items-center">
+                    <input type="checkbox" checked={item.completed} onChange={e => { const newRoadmap = [...state.roadmap]; newRoadmap[idx].completed = e.target.checked; setState({ ...state, roadmap: newRoadmap }) }} className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 w-5 h-5" />
+                    <input type="text" value={item.title} onChange={e => { const newRoadmap = [...state.roadmap]; newRoadmap[idx].title = e.target.value; setState({ ...state, roadmap: newRoadmap }) }} placeholder="Feature description" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5" />
+                    <button onClick={() => setState({ ...state, roadmap: state.roadmap.filter(i => i.id !== item.id) })} className="text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'faq' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">FAQ</h2>
+                <button onClick={() => setState({ ...state, faq: [...(state.faq || []), { id: Date.now().toString(), question: '', answer: '' }] })} className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                  <Plus className="w-4 h-4" /> Add FAQ
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.faq?.map((item, idx) => (
+                  <div key={item.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <input type="text" value={item.question} onChange={e => { const newFaq = [...state.faq]; newFaq[idx].question = e.target.value; setState({ ...state, faq: newFaq }) }} placeholder="Question" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 font-medium" />
+                      <textarea value={item.answer} onChange={e => { const newFaq = [...state.faq]; newFaq[idx].answer = e.target.value; setState({ ...state, faq: newFaq }) }} placeholder="Answer" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 h-20" />
+                    </div>
+                    <button onClick={() => setState({ ...state, faq: state.faq.filter(i => i.id !== item.id) })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'troubleshooting' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Troubleshooting</h2>
+                <button onClick={() => setState({ ...state, troubleshooting: [...(state.troubleshooting || []), { id: Date.now().toString(), problem: '', solution: '' }] })} className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                  <Plus className="w-4 h-4" /> Add Issue
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.troubleshooting?.map((item, idx) => (
+                  <div key={item.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <input type="text" value={item.problem} onChange={e => { const newTs = [...state.troubleshooting]; newTs[idx].problem = e.target.value; setState({ ...state, troubleshooting: newTs }) }} placeholder="Common Problem" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 font-medium" />
+                      <textarea value={item.solution} onChange={e => { const newTs = [...state.troubleshooting]; newTs[idx].solution = e.target.value; setState({ ...state, troubleshooting: newTs }) }} placeholder="Solution" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 h-20" />
+                    </div>
+                    <button onClick={() => setState({ ...state, troubleshooting: state.troubleshooting.filter(i => i.id !== item.id) })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'contact' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Contact Links</h2>
+                <button onClick={() => setState({ ...state, contact: { ...state.contact, links: [...(state.contact?.links || []), { id: Date.now().toString(), name: '', url: '' }] } })} className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                  <Plus className="w-4 h-4" /> Add Link
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.contact?.links?.map((link, idx) => (
+                  <div key={link.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4 items-center">
+                    <input type="text" value={link.name} onChange={e => { const newLinks = [...state.contact.links]; newLinks[idx].name = e.target.value; setState({ ...state, contact: { links: newLinks } }) }} placeholder="Platform (e.g. Twitter)" className="w-1/3 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5" />
+                    <input type="text" value={link.url} onChange={e => { const newLinks = [...state.contact.links]; newLinks[idx].url = e.target.value; setState({ ...state, contact: { links: newLinks } }) }} placeholder="URL" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5" />
+                    <button onClick={() => setState({ ...state, contact: { links: state.contact.links.filter(l => l.id !== link.id) } })} className="text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
               <p>Editor for section "{state.sections.find(s => s.id === activeSectionId)?.title}" coming soon...</p>

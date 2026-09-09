@@ -1,7 +1,7 @@
 import type { READMEProject } from '../../types';
 
 export function generateMarkdown(state: READMEProject): string {
-  const { metadata, sections, features, technologies, badges, environmentVariables, screenshots, projectStructure, installation, usage } = state;
+  const { metadata, sections, features, technologies, badges, environmentVariables, screenshots, projectStructure, installation, usage, demo, api, roadmap, faq, troubleshooting, deployment, contact } = state;
   let markdown = '';
 
   const isEnabled = (id: string) => sections?.find(s => s.id === id)?.enabled;
@@ -106,6 +106,56 @@ export function generateMarkdown(state: READMEProject): string {
     markdown += `## Project Structure\n\n\`\`\`text\n${projectStructure}\n\`\`\`\n\n`;
   }
   
+  // API Reference
+  if (isEnabled('api') && api?.endpoints?.length > 0) {
+    markdown += `## API Reference\n\n`;
+    api.endpoints.forEach(endpoint => {
+      markdown += `### ${endpoint.method} ${endpoint.path}\n\n`;
+      if (endpoint.description) markdown += `${endpoint.description}\n\n`;
+      if (endpoint.parameters) markdown += `**Parameters:**\n\`\`\`json\n${endpoint.parameters}\n\`\`\`\n\n`;
+      if (endpoint.request) markdown += `**Request:**\n\`\`\`json\n${endpoint.request}\n\`\`\`\n\n`;
+      if (endpoint.response) markdown += `**Response:**\n\`\`\`json\n${endpoint.response}\n\`\`\`\n\n`;
+    });
+  }
+
+  // Demo
+  if (isEnabled('demo') && (demo?.liveUrl || demo?.videoUrl || demo?.instructions)) {
+    markdown += `## Demo\n\n`;
+    if (demo.instructions) markdown += `${demo.instructions}\n\n`;
+    if (demo.liveUrl) markdown += `[Live Demo](${demo.liveUrl})\n\n`;
+    if (demo.videoUrl) markdown += `[Watch Video](${demo.videoUrl})\n\n`;
+  }
+
+  // Deployment
+  if (isEnabled('deployment') && deployment?.instructions) {
+    markdown += `## Deployment\n\n${deployment.instructions}\n\n`;
+  }
+
+  // Roadmap
+  if (isEnabled('roadmap') && roadmap && roadmap.length > 0) {
+    markdown += `## Roadmap\n\n`;
+    roadmap.forEach(item => {
+      markdown += `- [${item.completed ? 'x' : ' '}] ${item.title}\n`;
+    });
+    markdown += `\n`;
+  }
+
+  // FAQ
+  if (isEnabled('faq') && faq && faq.length > 0) {
+    markdown += `## FAQ\n\n`;
+    faq.forEach(item => {
+      markdown += `**${item.question}**\n\n${item.answer}\n\n`;
+    });
+  }
+
+  // Troubleshooting
+  if (isEnabled('troubleshooting') && troubleshooting && troubleshooting.length > 0) {
+    markdown += `## Troubleshooting\n\n`;
+    troubleshooting.forEach(item => {
+      markdown += `**Issue:** ${item.problem}\n\n**Solution:** ${item.solution}\n\n`;
+    });
+  }
+
   // Contributing
   if (isEnabled('contributing') && state.contributing?.instructions) {
     markdown += `## Contributing\n\n${state.contributing.instructions}\n\n`;
@@ -122,6 +172,15 @@ export function generateMarkdown(state: READMEProject): string {
     if (metadata.authorName) markdown += `**${metadata.authorName}**\n\n`;
     if (metadata.authorUrl) markdown += `- Website: [${metadata.authorUrl}](${metadata.authorUrl})\n`;
     if (metadata.githubUrl) markdown += `- GitHub: [@${metadata.githubUrl.split('/').pop()}](${metadata.githubUrl})\n`;
+  }
+
+  // Contact
+  if (isEnabled('contact') && contact?.links?.length > 0) {
+    markdown += `## Contact\n\n`;
+    contact.links.forEach(link => {
+      markdown += `- ${link.name} - [${link.url}](${link.url})\n`;
+    });
+    markdown += `\n`;
   }
 
   return markdown.trim();
