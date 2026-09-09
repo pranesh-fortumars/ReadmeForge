@@ -1,5 +1,5 @@
 import { Settings, AlertCircle, GripVertical } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import MarkdownEditor from '@uiw/react-markdown-editor'
 import type { DropResult } from '@hello-pangea/dnd'
