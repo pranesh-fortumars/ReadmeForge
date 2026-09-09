@@ -30,8 +30,8 @@ export default function Editor() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#0d1117]">
-      <div className="h-12 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 bg-gray-50 dark:bg-[#010409]">
+    <div className="flex flex-col h-full bg-white dark:bg-[#0a0a0a]">
+      <div className="h-12 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 bg-white/50 dark:bg-[#0d1117]/50 backdrop-blur-sm z-10 shadow-sm">
         <div className="flex items-center gap-2">
           <Settings className="w-4 h-4 text-gray-500" />
           <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Configuration</span>
@@ -73,16 +73,16 @@ export default function Editor() {
         </div>
       </div>
       
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         {/* Left Sidebar: Sections Manager */}
-        <div className="w-1/3 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-[#0d1117] overflow-y-auto p-4 flex flex-col gap-6">
+        <div className="w-1/3 border-r border-gray-200 dark:border-gray-800 bg-gray-50/80 dark:bg-[#050505]/80 backdrop-blur-md overflow-y-auto p-4 flex flex-col gap-6 shadow-[inset_-10px_0_15px_-10px_rgba(0,0,0,0.05)] dark:shadow-[inset_-10px_0_15px_-10px_rgba(0,0,0,0.2)]">
           
           <button 
             onClick={() => setActiveSection('project-details')}
-            className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
+            className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
               activeSectionId === 'project-details' 
-                ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium' 
-                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 font-medium shadow-sm scale-[1.02]' 
+                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 hover:scale-[1.01]'
             }`}
           >
             ⚙️ Project Details
@@ -102,13 +102,13 @@ export default function Editor() {
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`flex items-center gap-2 p-2 rounded-md ${
+                            className={`flex items-center gap-2 p-2 rounded-lg ${
                               snapshot.isDragging 
-                                ? 'bg-purple-50 border border-purple-200 dark:bg-purple-900/20 dark:border-purple-800 shadow-sm z-50' 
+                                ? 'bg-purple-50 border border-purple-200 dark:bg-purple-900/40 dark:border-purple-800 shadow-md z-50 scale-105' 
                                 : activeSectionId === section.id
-                                ? 'bg-purple-100 dark:bg-purple-900/30'
-                                : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                            } transition-colors cursor-pointer group`}
+                                ? 'bg-purple-100 dark:bg-purple-900/40 shadow-sm scale-[1.02]'
+                                : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-[1.01]'
+                            } transition-all duration-200 cursor-pointer group`}
                             onClick={() => setActiveSection(section.id)}
                           >
                             <div {...provided.dragHandleProps} className="cursor-grab hover:text-purple-500 text-gray-400">

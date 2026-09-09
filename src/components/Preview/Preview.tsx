@@ -30,8 +30,8 @@ export default function Preview() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#0d1117]">
-      <div className="h-12 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 bg-gray-50 dark:bg-[#010409]">
+    <div className="flex flex-col h-full bg-gray-50/50 dark:bg-[#0a0a0a]">
+      <div className="h-12 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 bg-white/50 dark:bg-[#0d1117]/50 backdrop-blur-sm">
         <div className="flex items-center bg-gray-200 dark:bg-gray-800 rounded-lg p-1">
           <button
             onClick={() => setViewMode('preview')}
@@ -75,10 +75,10 @@ export default function Preview() {
         </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-4 md:p-8">
-        <div className="max-w-3xl mx-auto">
+      <div className="flex-1 overflow-y-auto p-4 md:p-8 mesh-bg">
+        <div className="max-w-4xl mx-auto">
           {viewMode === 'preview' ? (
-            <div className="markdown-body" style={{ background: 'transparent' }}>
+            <div className="markdown-body glass-panel rounded-xl p-8 md:p-12 min-h-[800px] shadow-2xl shadow-gray-200/50 dark:shadow-black/50" style={{ background: 'transparent' }}>
               <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                 {markdown}
               </ReactMarkdown>
@@ -87,7 +87,7 @@ export default function Preview() {
             <textarea
               value={markdown}
               readOnly
-              className="w-full h-full min-h-[500px] p-4 font-mono text-sm bg-gray-50 dark:bg-[#0d1117] text-gray-900 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              className="w-full h-full min-h-[800px] p-6 font-mono text-sm bg-white dark:bg-[#0d1117] text-gray-900 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none transition-shadow duration-300"
             />
           )}
         </div>

@@ -46,7 +46,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 p-6 md:p-12">
+    <div className="flex-1 overflow-y-auto mesh-bg p-6 md:p-12">
       <div className="max-w-6xl mx-auto space-y-12">
         
         {/* Header */}
@@ -82,7 +82,7 @@ export default function Dashboard() {
                   <Card 
                     key={project.id}
                     onClick={() => handleLoadProject(project)}
-                    className="hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between h-40 group"
+                    className="glass-panel hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between h-40 group border-transparent hover:border-purple-500/30"
                   >
                     <CardHeader className="pb-2 pt-4">
                       <div className="flex justify-between items-start">
@@ -117,7 +117,7 @@ export default function Dashboard() {
                 {/* Empty Create Card */}
                 <div 
                   onClick={() => setShowTemplateModal(true)}
-                  className="h-40 border-2 border-dashed border-gray-300 dark:border-gray-800 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors cursor-pointer"
+                  className="h-40 glass-panel border-2 border-dashed border-gray-300/50 dark:border-gray-700/50 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:text-purple-600 hover:border-purple-400 hover:bg-purple-50/50 dark:hover:bg-purple-900/20 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer"
                 >
                   <Plus className="w-8 h-8 mb-2" />
                   <span className="font-medium">New Project</span>
@@ -131,7 +131,7 @@ export default function Dashboard() {
             <section>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Tools</h2>
               <div className="space-y-3">
-                <button className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-purple-500 transition-colors text-left group">
+                <button className="w-full p-4 glass-panel rounded-lg flex items-center gap-4 hover:border-purple-500/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-left group">
                   <div className="w-10 h-10 rounded-md bg-purple-100 dark:bg-gray-800 flex items-center justify-center text-purple-600 dark:text-purple-400">
                     <LayoutTemplate className="w-5 h-5" />
                   </div>
@@ -142,7 +142,7 @@ export default function Dashboard() {
                 </button>
                 <button 
                   onClick={() => navigate('/tools/badges')}
-                  className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-blue-500 transition-colors text-left group"
+                  className="w-full p-4 glass-panel rounded-lg flex items-center gap-4 hover:border-blue-500/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-left group"
                 >
                   <div className="w-10 h-10 rounded-md bg-blue-100 dark:bg-gray-800 flex items-center justify-center text-blue-600 dark:text-blue-400">
                     <Star className="w-5 h-5" />
@@ -154,7 +154,7 @@ export default function Dashboard() {
                 </button>
                 <button 
                   onClick={() => navigate('/tools/playground')}
-                  className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-orange-500 transition-colors text-left group"
+                  className="w-full p-4 glass-panel rounded-lg flex items-center gap-4 hover:border-orange-500/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-left group"
                 >
                   <div className="w-10 h-10 rounded-md bg-orange-100 dark:bg-gray-800 flex items-center justify-center text-orange-600 dark:text-orange-400">
                     <FileText className="w-5 h-5" />
@@ -166,7 +166,7 @@ export default function Dashboard() {
                 </button>
                 <button 
                   onClick={() => navigate('/tools/changelog')}
-                  className="w-full p-4 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg flex items-center gap-4 hover:border-emerald-500 transition-colors text-left group"
+                  className="w-full p-4 glass-panel rounded-lg flex items-center gap-4 hover:border-emerald-500/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-left group"
                 >
                   <div className="w-10 h-10 rounded-md bg-emerald-100 dark:bg-gray-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                     <GitBranch className="w-5 h-5" />
