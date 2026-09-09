@@ -1,7 +1,7 @@
 import type { READMEProject } from '../../types';
 
 export function generateMarkdown(state: READMEProject): string {
-  const { metadata, sections, features, technologies, badges, environmentVariables, screenshots, projectStructure, installation, usage, demo, api, roadmap, faq, troubleshooting, deployment, contact } = state;
+  const { metadata, sections, features, technologies, badges, environmentVariables, screenshots, projectStructure, installation, usage, demo, api, roadmap, faq, troubleshooting, deployment, contact, flowchart, workflows } = state;
   let markdown = '';
 
   const isEnabled = (id: string) => sections?.find(s => s.id === id)?.enabled;
@@ -104,6 +104,19 @@ export function generateMarkdown(state: READMEProject): string {
   // Project Structure
   if (isEnabled('project-structure') && projectStructure) {
     markdown += `## Project Structure\n\n\`\`\`text\n${projectStructure}\n\`\`\`\n\n`;
+  }
+
+  // Flow Diagram
+  if (isEnabled('flowchart') && flowchart?.code) {
+    markdown += `## Flow Diagram\n\n\`\`\`mermaid\n${flowchart.code}\n\`\`\`\n\n`;
+  }
+  
+  // Workflows
+  if (isEnabled('workflows') && workflows && workflows.length > 0) {
+    markdown += `## CI/CD Workflows\n\n`;
+    workflows.forEach(wf => {
+      markdown += `### ${wf.name}\n\n\`\`\`yaml\n${wf.yaml}\n\`\`\`\n\n`;
+    });
   }
   
   // API Reference

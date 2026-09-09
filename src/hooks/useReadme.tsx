@@ -22,7 +22,9 @@ export const defaultSections: Section[] = [
   { id: 'troubleshooting', title: 'Troubleshooting', enabled: false },
   { id: 'deployment', title: 'Deployment', enabled: false },
   { id: 'contact', title: 'Contact', enabled: false },
-  { id: 'stats', title: 'GitHub Stats', enabled: false }
+  { id: 'stats', title: 'GitHub Stats', enabled: false },
+  { id: 'flowchart', title: 'Flow Diagram', enabled: false },
+  { id: 'workflows', title: 'CI/CD Workflows', enabled: false }
 ];
 
 export const defaultProject: READMEProject = {
@@ -79,6 +81,8 @@ export const defaultProject: READMEProject = {
   deployment: { instructions: '' },
   author: { name: '', url: '', email: '' },
   contact: { links: [] },
+  flowchart: { code: 'graph TD;\n    A-->B;\n    A-->C;\n    B-->D;\n    C-->D;', template: 'custom' },
+  workflows: [],
   settings: {},
   generatedMarkdown: '',
   qualityScore: { score: 0, recommendations: [] },
@@ -130,6 +134,8 @@ export const defaultProfile: READMEProject = {
     { id: 'twitter', name: 'Twitter', url: 'https://twitter.com/username' },
     { id: 'linkedin', name: 'LinkedIn', url: 'https://linkedin.com/in/username' }
   ] },
+  flowchart: { code: 'graph TD;\n    A-->B;\n    A-->C;\n    B-->D;\n    C-->D;', template: 'custom' },
+  workflows: [],
   settings: {
     showGithubStats: true,
     showTopLangs: true,

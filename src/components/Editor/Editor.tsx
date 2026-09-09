@@ -1,4 +1,5 @@
 import { Settings, AlertCircle, GripVertical } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import MarkdownEditor from '@uiw/react-markdown-editor'
 import type { DropResult } from '@hello-pangea/dnd'
@@ -79,13 +80,24 @@ export default function Editor() {
           
           <button 
             onClick={() => setActiveSection('project-details')}
-            className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
+            className={`relative w-full text-left px-3 py-2 rounded-lg transition-colors ${
               activeSectionId === 'project-details' 
-                ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 font-medium shadow-sm scale-[1.02]' 
-                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 hover:scale-[1.01]'
+                ? 'text-purple-700 dark:text-purple-300 font-medium' 
+                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
             }`}
           >
-            ⚙️ Project Details
+            {activeSectionId === 'project-details' && (
+              <motion.div
+                layoutId="activeSectionIndicator"
+                className="absolute inset-0 bg-purple-100 dark:bg-purple-900/40 rounded-lg shadow-sm border border-purple-200 dark:border-purple-800/50"
+                initial={false}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span className="relative z-10 flex items-center gap-2">
+              <span>⚙️</span>
+              <span>Project Details</span>
+            </span>
           </button>
 
           <section>
@@ -102,31 +114,39 @@ export default function Editor() {
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`flex items-center gap-2 p-2 rounded-lg ${
+                            className={`relative flex items-center gap-2 p-2 rounded-lg ${
                               snapshot.isDragging 
                                 ? 'bg-purple-50 border border-purple-200 dark:bg-purple-900/40 dark:border-purple-800 shadow-md z-50 scale-105' 
-                                : activeSectionId === section.id
-                                ? 'bg-purple-100 dark:bg-purple-900/40 shadow-sm scale-[1.02]'
-                                : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-[1.01]'
-                            } transition-all duration-200 cursor-pointer group`}
+                                : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                            } transition-colors cursor-pointer group`}
                             onClick={() => setActiveSection(section.id)}
                           >
-                            <div {...provided.dragHandleProps} className="cursor-grab hover:text-purple-500 text-gray-400">
-                              <GripVertical className="w-4 h-4" />
-                            </div>
-                            <label className="flex items-center gap-2 cursor-pointer flex-1" onClick={e => e.stopPropagation()}>
-                              <input 
-                                type="checkbox"
-                                checked={section.enabled}
-                                onChange={() => toggleSection(section.id)}
-                                className="w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700"
+                            {activeSectionId === section.id && !snapshot.isDragging && (
+                              <motion.div
+                                layoutId="activeSectionIndicator"
+                                className="absolute inset-0 bg-purple-100 dark:bg-purple-900/40 rounded-lg shadow-sm border border-purple-200 dark:border-purple-800/50"
+                                initial={false}
+                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
                               />
-                              <span className={`text-sm select-none ${
-                                activeSectionId === section.id 
-                                  ? 'text-purple-700 dark:text-purple-300 font-medium' 
-                                  : 'text-gray-700 dark:text-gray-300'
-                              }`}>{section.title}</span>
-                            </label>
+                            )}
+                            <div className="relative z-10 flex items-center w-full gap-2">
+                              <div {...provided.dragHandleProps} className="cursor-grab hover:text-purple-500 text-gray-400">
+                                <GripVertical className="w-4 h-4" />
+                              </div>
+                              <label className="flex items-center gap-2 cursor-pointer flex-1" onClick={e => e.stopPropagation()}>
+                                <input 
+                                  type="checkbox"
+                                  checked={section.enabled}
+                                  onChange={() => toggleSection(section.id)}
+                                  className="w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700"
+                                />
+                                <span className={`text-sm select-none transition-colors ${
+                                  activeSectionId === section.id 
+                                    ? 'text-purple-700 dark:text-purple-300 font-medium' 
+                                    : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'
+                                }`}>{section.title}</span>
+                              </label>
+                            </div>
                           </div>
                         )}
                       </Draggable>
@@ -863,6 +883,38 @@ export default function Editor() {
                     <input type="text" value={link.name} onChange={e => { const newLinks = [...state.contact.links]; newLinks[idx].name = e.target.value; setState({ ...state, contact: { links: newLinks } }) }} placeholder="Platform (e.g. Twitter)" className="w-1/3 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5" />
                     <input type="text" value={link.url} onChange={e => { const newLinks = [...state.contact.links]; newLinks[idx].url = e.target.value; setState({ ...state, contact: { links: newLinks } }) }} placeholder="URL" className="flex-1 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5" />
                     <button onClick={() => setState({ ...state, contact: { links: state.contact.links.filter(l => l.id !== link.id) } })} className="text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : activeSectionId === 'flowchart' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Flow Diagram (Mermaid)</h2>
+              <textarea
+                className="w-full bg-gray-50 dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-lg p-4 h-64 font-mono text-sm focus:ring-2 focus:ring-purple-500 outline-none"
+                value={state.flowchart?.code || ''}
+                onChange={(e) => setState({ ...state, flowchart: { ...state.flowchart, code: e.target.value } })}
+                placeholder="graph TD;\n  A-->B;"
+                spellCheck={false}
+              />
+              <p className="text-sm text-gray-500">Supports all standard Mermaid.js syntax.</p>
+            </div>
+          ) : activeSectionId === 'workflows' ? (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">CI/CD Workflows</h2>
+                <button onClick={() => setState({ ...state, workflows: [...(state.workflows || []), { id: Date.now().toString(), name: 'New Workflow', yaml: '' }] })} className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                  <Plus className="w-4 h-4" /> Add Workflow
+                </button>
+              </div>
+              <div className="space-y-4">
+                {state.workflows?.map((wf, idx) => (
+                  <div key={wf.id} className="p-4 bg-gray-50 dark:bg-[#010409] border border-gray-200 dark:border-gray-800 rounded-lg flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <input type="text" value={wf.name} onChange={e => { const newWf = [...state.workflows]; newWf[idx].name = e.target.value; setState({ ...state, workflows: newWf }) }} placeholder="Workflow Name (e.g. CI/CD Pipeline)" className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 font-medium" />
+                      <textarea value={wf.yaml} onChange={e => { const newWf = [...state.workflows]; newWf[idx].yaml = e.target.value; setState({ ...state, workflows: newWf }) }} placeholder="name: CI\non: [push]\njobs: ..." className="w-full bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 h-32 font-mono text-sm" spellCheck={false} />
+                    </div>
+                    <button onClick={() => setState({ ...state, workflows: state.workflows.filter(w => w.id !== wf.id) })} className="text-gray-400 hover:text-red-500 self-start"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 ))}
               </div>

@@ -37,6 +37,8 @@ export interface READMEProject {
   deployment: { instructions: string };
   author: { name: string; url: string; email: string };
   contact: { links: { id: string; name: string; url: string }[] };
+  flowchart: { code: string; template: string };
+  workflows: { id: string; name: string; yaml: string }[];
   settings: {
     theme?: string;
     showGithubStats?: boolean;

@@ -1,6 +1,7 @@
 import { Plus, FileText, ArrowRight, LayoutTemplate, Star, GitBranch, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { motion, type Variants } from 'framer-motion'
 import { useReadme } from '../hooks/useReadme'
 import { StorageManager } from '../services/storage/storageService'
 import type { READMEProject } from '../types'
@@ -13,6 +14,19 @@ export default function Dashboard() {
   const { loadProject, resetState } = useReadme()
   const [projects, setProjects] = useState<READMEProject[]>([])
   const [showTemplateModal, setShowTemplateModal] = useState(false)
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  }
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  }
 
   useEffect(() => {
     setProjects(StorageManager.getProjects())
@@ -46,11 +60,21 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto mesh-bg p-6 md:p-12">
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }}
+      className="flex-1 overflow-y-auto mesh-bg p-6 md:p-12"
+    >
       <div className="max-w-6xl mx-auto space-y-12">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+        >
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome to READMEForge</h1>
             <p className="text-gray-600 dark:text-gray-400">Create documentation that makes your repository easier to understand.</p>
@@ -65,7 +89,7 @@ export default function Dashboard() {
               Import Repository
             </Button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -76,14 +100,19 @@ export default function Dashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Projects</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+              >
                 
                 {projects.map((project) => (
-                  <Card 
-                    key={project.id}
-                    onClick={() => handleLoadProject(project)}
-                    className="glass-panel hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between h-40 group border-transparent hover:border-purple-500/30"
-                  >
+                  <motion.div variants={itemVariants} key={project.id}>
+                    <Card 
+                      onClick={() => handleLoadProject(project)}
+                      className="glass-panel hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between h-40 group border-transparent hover:border-purple-500/30"
+                    >
                     <CardHeader className="pb-2 pt-4">
                       <div className="flex justify-between items-start">
                         <div>
@@ -111,23 +140,30 @@ export default function Dashboard() {
                         </span>
                       </div>
                     </CardContent>
-                  </Card>
+                    </Card>
+                  </motion.div>
                 ))}
                 
                 {/* Empty Create Card */}
-                <div 
+                <motion.div 
+                  variants={itemVariants}
                   onClick={() => setShowTemplateModal(true)}
                   className="h-40 glass-panel border-2 border-dashed border-gray-300/50 dark:border-gray-700/50 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:text-purple-600 hover:border-purple-400 hover:bg-purple-50/50 dark:hover:bg-purple-900/20 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer"
                 >
                   <Plus className="w-8 h-8 mb-2" />
                   <span className="font-medium">New Project</span>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </section>
           </div>
 
           {/* Quick Actions Sidebar */}
-          <div className="space-y-6">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-6"
+          >
             <section>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Tools</h2>
               <div className="space-y-3">
@@ -138,6 +174,18 @@ export default function Dashboard() {
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">Templates</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Browse starter layouts</p>
+                  </div>
+                </button>
+                <button 
+                  onClick={() => navigate('/editor/new')}
+                  className="w-full p-4 glass-panel rounded-lg flex items-center gap-4 hover:border-pink-500/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-left group"
+                >
+                  <div className="w-10 h-10 rounded-md bg-pink-100 dark:bg-gray-800 flex items-center justify-center text-pink-600 dark:text-pink-400">
+                    <LayoutTemplate className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Flow Diagrams</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Generate Mermaid charts</p>
                   </div>
                 </button>
                 <button 
@@ -176,9 +224,21 @@ export default function Dashboard() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">Create release notes</p>
                   </div>
                 </button>
+                <button 
+                  onClick={() => navigate('/editor/new')}
+                  className="w-full p-4 glass-panel rounded-lg flex items-center gap-4 hover:border-indigo-500/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-left group"
+                >
+                  <div className="w-10 h-10 rounded-md bg-indigo-100 dark:bg-gray-800 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    <GitBranch className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Workflow Generator</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Create CI/CD actions</p>
+                  </div>
+                </button>
               </div>
             </section>
-          </div>
+          </motion.div>
           
         </div>
       </div>
@@ -232,6 +292,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
