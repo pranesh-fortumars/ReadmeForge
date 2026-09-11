@@ -2,7 +2,8 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
-import { Check, Copy, Download, Code, FileText } from 'lucide-react'
+import { Check, Copy, Download, Code, FileText, FileDown } from 'lucide-react'
+import html2pdf from 'html2pdf.js'
 import { useReadme } from '../../hooks/useReadme'
 import { generateMarkdown } from '../../services/analyzer/markdownGenerator'
 import 'github-markdown-css/github-markdown.css'
@@ -27,6 +28,21 @@ export default function Preview() {
     document.body.appendChild(element)
     element.click()
     document.body.removeChild(element)
+  }
+
+  const handleDownloadPDF = () => {
+    const element = document.getElementById('pdf-content')
+    if (!element) return
+
+    const opt = {
+      margin:       10,
+      filename:     'README.pdf',
+      image:        { type: 'jpeg' as const, quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }
+
+    html2pdf().set(opt).from(element).save()
   }
 
   return (
@@ -72,13 +88,20 @@ export default function Preview() {
           >
             <Download className="w-5 h-5" />
           </button>
+          <button
+            onClick={handleDownloadPDF}
+            className="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md transition-colors"
+            title="Download PDF"
+          >
+            <FileDown className="w-5 h-5" />
+          </button>
         </div>
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 md:p-8 mesh-bg">
         <div className="max-w-4xl mx-auto">
           {viewMode === 'preview' ? (
-            <div className="markdown-body glass-panel rounded-xl p-8 md:p-12 min-h-[800px] shadow-2xl shadow-gray-200/50 dark:shadow-black/50" style={{ background: 'transparent' }}>
+            <div id="pdf-content" className="markdown-body glass-panel rounded-xl p-8 md:p-12 min-h-[800px] shadow-2xl shadow-gray-200/50 dark:shadow-black/50" style={{ background: 'transparent' }}>
               <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                 {markdown}
               </ReactMarkdown>
