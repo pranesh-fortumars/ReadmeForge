@@ -27,9 +27,11 @@
 - ✓ **3-Column Architecture**: A powerful new editor workspace featuring a Sections Manager, an Active Editor Canvas, and a Live Markdown Preview.
 - ✓ **Dynamic Structured Forms**: Edit "Environment Variables", "Project Details", and more with strictly-typed custom UI forms—no raw markdown needed.
 - ✓ **Rich Text Editor**: A built-in WYSIWYG markdown editor for writing long descriptions and contributing guidelines effortlessly.
+- ✓ **AI Auto-Generation**: Paste a GitHub repo URL and let AI automatically generate a stunning README using OpenAI and secure serverless Vercel endpoints.
 - ✓ **Flow Diagram Generator**: Write Mermaid.js syntax and automatically generate beautifully rendered flowcharts in your README.
 - ✓ **CI/CD Workflow Generator**: Document your GitHub Actions or deployment pipelines easily with custom YAML highlighting.
 - ✓ **Changelog Generator**: Built-in tool to format standard release notes using 'Keep a Changelog' specifications.
+- ✓ **PDF Export**: Generate a high-quality PDF of your GitHub-styled preview documentation with a single click using `html2pdf.js`.
 - ✓ **Premium SaaS UI**: Buttery-smooth transitions and staggered animations powered by Framer Motion, with glassmorphism aesthetics.
 - ✓ **GitHub API Integration**: Paste a repo URL to instantly parse its `package.json` and auto-fill your Tech Stack and project details.
 - ✓ **Drag-and-Drop Reordering**: Rearrange sections of your README by dragging them in the sidebar.
